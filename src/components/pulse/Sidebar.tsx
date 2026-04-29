@@ -1,13 +1,14 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2 } from "lucide-react";
+import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map } from "lucide-react";
 
 const items = [
   { to: "/",             label: "Overview",     icon: Home },
   { to: "/managers",     label: "Managers",     icon: Users },
   { to: "/demographics", label: "Demographics", icon: UserCircle2, sub: true },
   { to: "/heatmap",      label: "Heatmap",      icon: Grid3x3 },
+  { to: "/culture-map",  label: "Culture Map",  icon: Map },
   { to: "/trends",       label: "Trends",       icon: LineChart },
   { to: "/comments",     label: "Comments",     icon: MessageSquare },
 ];
