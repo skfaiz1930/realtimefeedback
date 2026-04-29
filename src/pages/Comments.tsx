@@ -141,8 +141,9 @@ function ThemeCard({ t }: { t: Theme }) {
         <div style={{ width: `${t.pos}%`, background: "#16A34A" }} />
       </div>
 
+      {/* Always-visible first 2 quotes */}
       <div className="space-y-3">
-        {visible.map((q, i) => (
+        {t.quotes.slice(0, 2).map((q, i) => (
           <div key={i} className="flex gap-2">
             <span className="text-[24px] leading-none text-muted-foreground/60 font-serif select-none">"</span>
             <div>
@@ -156,14 +157,29 @@ function ThemeCard({ t }: { t: Theme }) {
         ))}
       </div>
 
-      <AnimatePresence>
-        {expanded && t.quotes.length > 2 && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Expandable extra quotes — CSS max-height transition */}
+      <div
+        style={{
+          maxHeight: expanded ? 800 : 0,
+          overflow: "hidden",
+          transition: "max-height 350ms ease-out",
+        }}
+      >
+        <div className="space-y-3 pt-3">
+          {t.quotes.slice(2).map((q, i) => (
+            <div key={i} className="flex gap-2">
+              <span className="text-[24px] leading-none text-muted-foreground/60 font-serif select-none">"</span>
+              <div>
+                <p className="text-[13px] italic text-foreground/85 leading-relaxed">{q.text}</p>
+                <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <span className="w-1 h-1 rounded-full inline-block" style={{ background: dotColor[q.sent] }} />
+                  {q.meta}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="mt-3 flex justify-end">
         <button
