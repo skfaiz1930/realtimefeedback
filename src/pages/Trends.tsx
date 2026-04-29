@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUp, TrendingUp } from "lucide-react";
 import {
-  Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart,
+  Bar, BarChart, CartesianGrid, LabelList, Legend, Line, LineChart,
   ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { PageShell } from "@/components/pulse/PageShell";
