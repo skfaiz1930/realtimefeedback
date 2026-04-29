@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUp, TrendingUp } from "lucide-react";
 import {
-  CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Bar, BarChart, CartesianGrid, Cell, LabelList, Legend, Line, LineChart,
+  ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { PageShell } from "@/components/pulse/PageShell";
 import { scoreColor } from "@/lib/scoreColor";
@@ -51,19 +52,40 @@ function CustomTooltip({ active, payload, label }: any) {
   );
 }
 
+// YoY data: Apr 2025 vs Apr 2026
+const yoyData = [
+  { dimension: "Connect", "Apr 2025": 61, "Apr 2026": 74 },
+  { dimension: "Develop", "Apr 2025": 52, "Apr 2026": 61 },
+  { dimension: "Inspire", "Apr 2025": 68, "Apr 2026": 78 },
+  { dimension: "Overall", "Apr 2025": 60, "Apr 2026": 71 },
+];
+
 const Trends = () => {
   const [visible, setVisible] = useState<Record<LineKey, boolean>>({
     Connect: true, Develop: true, Inspire: true, Overall: true,
   });
   const [popover, setPopover] = useState<typeof markers[number] | null>(null);
+  const [yoy, setYoy] = useState(false);
 
   return (
     <PageShell>
       <div className="bg-card border border-border rounded-lg shadow-card p-5 mb-5">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h2 className="text-[16px] font-medium tracking-tight">Org CDI Score — 8 Cycle Trend</h2>
+          <h2 className="text-[16px] font-medium tracking-tight">
+            {yoy ? "Year-on-Year — Apr 2025 vs Apr 2026" : "Org CDI Score — 8 Cycle Trend"}
+          </h2>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {(Object.keys(lineMeta) as LineKey[]).map((k) => {
+            <button
+              onClick={() => setYoy((y) => !y)}
+              className={`h-7 px-3 rounded-pill text-[11px] font-medium border transition-colors ${
+                yoy
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-muted-foreground border-border hover:text-foreground"
+              }`}
+            >
+              Year-on-Year
+            </button>
+            {!yoy && (Object.keys(lineMeta) as LineKey[]).map((k) => {
               const on = visible[k];
               return (
                 <button
