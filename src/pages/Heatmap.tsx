@@ -1,8 +1,10 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
 import { scoreColor } from "@/lib/scoreColor";
+import { HeatmapDiagnosticGuide, type DiagnosticFinding } from "@/components/pulse/HeatmapDiagnosticGuide";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Dim = "Connect" | "Develop" | "Inspire";
 type Resp = "self" | "team" | "peer" | "rm";
