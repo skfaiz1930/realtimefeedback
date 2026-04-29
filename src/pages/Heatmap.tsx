@@ -109,8 +109,45 @@ const Heatmap = () => {
       .map((d) => ({ dim: d, rows: filtered.filter((q) => q.dim === d) }));
   }, [filtered, dimFilter]);
 
+  // AI diagnostic findings
+  const [findings, setFindings] = useState<DiagnosticFinding[]>([]);
+  const findingsByQ = useMemo(() => {
+    const m = new Map<string, DiagnosticFinding>();
+    findings.forEach((f) => m.set(f.questionId, f));
+    return m;
+  }, [findings]);
+
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+  const [pulseQ, setPulseQ] = useState<string | null>(null);
+
+  const handleFindingClick = useCallback((qid: string) => {
+    // Ensure dimension filter shows the question
+    const q = questions.find((x) => x.id === qid);
+    if (q && dimFilter !== "All" && dimFilter !== q.dim) setDimFilter("All");
+    setTimeout(() => {
+      const row = rowRefs.current[qid];
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        setPulseQ(qid);
+        setTimeout(() => setPulseQ(null), 2000);
+      }
+    }, 50);
+  }, [dimFilter]);
+
+  // Pass simplified payload to AI
+  const aiPayload = useMemo(
+    () => questions.map((q) => ({ id: q.id, text: q.text, self: q.self, team: q.team, peer: q.peer, rm: q.rm })),
+    []
+  );
+
   return (
     <PageShell>
+      <HeatmapDiagnosticGuide
+        questions={aiPayload}
+        onFindingClick={handleFindingClick}
+        onFindingsLoaded={setFindings}
+      />
+
       {/* Insight callout */}
       <div
         className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3"
