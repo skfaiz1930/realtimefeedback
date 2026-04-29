@@ -11,6 +11,7 @@ import Trends from "./pages/Trends.tsx";
 import CultureMap from "./pages/CultureMap.tsx";
 import Comments from "./pages/Comments.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { PeriodProvider } from "./lib/periodContext";
 
 const queryClient = new QueryClient();
 
@@ -37,9 +38,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AnimatedRoutes />
-      </BrowserRouter>
+      <PeriodProvider>
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </PeriodProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
