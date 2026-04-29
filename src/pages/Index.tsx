@@ -12,7 +12,6 @@ import { MobileNav } from "@/components/pulse/MobileNav";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
 
 const Index = () => {
-  const [active, setActive] = useState("overview");
   const [compare, setCompare] = useState(false);
   const [period] = useState("Apr 2026 Cycle");
   const [refreshKey, setRefreshKey] = useState(0);
