@@ -1,8 +1,10 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
 import { scoreColor } from "@/lib/scoreColor";
+import { HeatmapDiagnosticGuide, type DiagnosticFinding } from "@/components/pulse/HeatmapDiagnosticGuide";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Dim = "Connect" | "Develop" | "Inspire";
 type Resp = "self" | "team" | "peer" | "rm";
@@ -107,8 +109,45 @@ const Heatmap = () => {
       .map((d) => ({ dim: d, rows: filtered.filter((q) => q.dim === d) }));
   }, [filtered, dimFilter]);
 
+  // AI diagnostic findings
+  const [findings, setFindings] = useState<DiagnosticFinding[]>([]);
+  const findingsByQ = useMemo(() => {
+    const m = new Map<string, DiagnosticFinding>();
+    findings.forEach((f) => m.set(f.questionId, f));
+    return m;
+  }, [findings]);
+
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+  const [pulseQ, setPulseQ] = useState<string | null>(null);
+
+  const handleFindingClick = useCallback((qid: string) => {
+    // Ensure dimension filter shows the question
+    const q = questions.find((x) => x.id === qid);
+    if (q && dimFilter !== "All" && dimFilter !== q.dim) setDimFilter("All");
+    setTimeout(() => {
+      const row = rowRefs.current[qid];
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        setPulseQ(qid);
+        setTimeout(() => setPulseQ(null), 2000);
+      }
+    }, 50);
+  }, [dimFilter]);
+
+  // Pass simplified payload to AI
+  const aiPayload = useMemo(
+    () => questions.map((q) => ({ id: q.id, text: q.text, self: q.self, team: q.team, peer: q.peer, rm: q.rm })),
+    []
+  );
+
   return (
     <PageShell>
+      <HeatmapDiagnosticGuide
+        questions={aiPayload}
+        onFindingClick={handleFindingClick}
+        onFindingsLoaded={setFindings}
+      />
+
       {/* Insight callout */}
       <div
         className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3"
@@ -198,17 +237,45 @@ const Heatmap = () => {
                         {g.dim} <span className="text-muted-foreground font-normal">— {g.rows.length} questions</span>
                       </td>
                     </tr>
-                    {g.rows.map((q, idx) => (
+                    {g.rows.map((q, idx) => {
+                      const flag = findingsByQ.get(q.id);
+                      const isPulsing = pulseQ === q.id;
+                      return (
                       <motion.tr
                         key={q.id}
+                        ref={(el) => { rowRefs.current[q.id] = el; }}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2, delay: idx * 0.02 }}
+                        animate={
+                          isPulsing
+                            ? { opacity: 1, backgroundColor: ["#FEF3C7", "#FFFFFF", "#FEF3C7", "#FFFFFF"] }
+                            : { opacity: 1 }
+                        }
+                        transition={
+                          isPulsing
+                            ? { duration: 2, times: [0, 0.25, 0.5, 1] }
+                            : { duration: 0.2, delay: idx * 0.02 }
+                        }
                         className="border-b border-border hover:bg-[#FFF5F5] transition-colors"
                         style={{ height: 48 }}
                       >
                         <td className="px-5 text-[13px] text-foreground truncate max-w-0" title={q.text}>
-                          <div className="truncate">{q.text}</div>
+                          <div className="truncate flex items-center gap-1.5">
+                            {flag && (
+                              <TooltipProvider delayDuration={150}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="shrink-0 cursor-help" style={{ color: "#7C3AED" }}>
+                                      <Sparkles size={12} />
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-[280px] text-[12px]">
+                                    AI flagged: {flag.finding}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                            <span className="truncate">{q.text}</span>
+                          </div>
                         </td>
                         <td>
                           <span className="inline-block px-2 py-0.5 rounded-pill text-[11px] bg-muted text-muted-foreground">{q.theme}</span>
@@ -217,7 +284,8 @@ const Heatmap = () => {
                           <td key={r.key} className="text-center"><ScoreCell v={q[r.key]} /></td>
                         ))}
                       </motion.tr>
-                    ))}
+                      );
+                    })}
                   </Fragment>
                 ))}
 
