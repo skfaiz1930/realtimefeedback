@@ -13,7 +13,6 @@ interface Props {
 
 export function PageShell({ children, withAIRail = false, rightSlot }: Props) {
   const [compare, setCompare] = useState(false);
-  const [period] = useState("Apr 2026 Cycle");
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +21,7 @@ export function PageShell({ children, withAIRail = false, rightSlot }: Props) {
 
       <main className={`md:pl-[220px] ${withAIRail ? "lg:pr-[300px]" : ""} pb-20 md:pb-8`}>
         <div className="max-w-[1180px] mx-auto px-5 md:px-8 pt-7">
-          <Header period={period} compare={compare} onToggleCompare={() => setCompare((c) => !c)} />
+          <Header compare={compare} onToggleCompare={() => setCompare((c) => !c)} />
 
           <motion.div
             initial={{ opacity: 0, y: 8 }}

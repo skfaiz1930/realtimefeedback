@@ -10,10 +10,11 @@ import { AIPanel } from "@/components/pulse/AIPanel";
 import { Drawer } from "@/components/pulse/Drawer";
 import { MobileNav } from "@/components/pulse/MobileNav";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
+import { usePeriod } from "@/lib/periodContext";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
-  const [period] = useState("Apr 2026 Cycle");
+  const { period, snapshot } = usePeriod();
   const [refreshKey, setRefreshKey] = useState(0);
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
@@ -37,7 +38,42 @@ const Index = () => {
 
       <main className="md:pl-[220px] lg:pr-[300px] pb-20 md:pb-8">
         <div className="max-w-[1100px] mx-auto px-5 md:px-8 pt-7">
-          <Header period={period} compare={compare} onToggleCompare={handleCompare} />
+          <Header compare={compare} onToggleCompare={handleCompare} />
+
+          {/* Period Summary banner */}
+          <motion.section
+            key={period}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2"
+            style={{
+              background: "#F7F7F5",
+              border: "1px solid #EEEEEC",
+              borderRadius: 10,
+              padding: "16px 20px",
+            }}
+          >
+            <div className="text-[13px] font-medium text-foreground">
+              {period.replace(" Cycle", "")} — Cycle Summary
+            </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-foreground/85">
+              <span><span className="text-muted-foreground">Org Score:</span> <span className="font-semibold tabular-nums">{snapshot.org}/100</span></span>
+              <span className="text-border">|</span>
+              <span>
+                <span className="text-muted-foreground">vs Last Cycle:</span>{" "}
+                <span className={`font-semibold tabular-nums ${snapshot.delta > 0 ? "text-success" : snapshot.delta < 0 ? "text-danger" : "text-muted-foreground"}`}>
+                  {snapshot.delta > 0 ? "↑ +" : snapshot.delta < 0 ? "↓ " : ""}{snapshot.delta} pts
+                </span>
+              </span>
+              <span className="text-border">|</span>
+              <span><span className="text-muted-foreground">Best Dimension:</span> <span className="font-semibold">{snapshot.best.name} ({snapshot.best.score})</span></span>
+              <span className="text-border">|</span>
+              <span><span className="text-muted-foreground">Needs Attention:</span> <span className="font-semibold text-primary">{snapshot.worst.name} ({snapshot.worst.score})</span></span>
+              <span className="text-border">|</span>
+              <span><span className="text-muted-foreground">At-Risk Teams:</span> <span className="font-semibold tabular-nums">{snapshot.atRisk}</span></span>
+            </div>
+          </motion.section>
 
           {/* Metric cards */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

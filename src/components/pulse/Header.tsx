@@ -1,14 +1,26 @@
-import { memo } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, Check, ChevronDown } from "lucide-react";
+import { PERIODS, Period, usePeriod } from "@/lib/periodContext";
 
 interface Props {
-  period: string;
   compare: boolean;
   onToggleCompare: () => void;
 }
 
-function HeaderBase({ period, compare, onToggleCompare }: Props) {
+function HeaderBase({ compare, onToggleCompare }: Props) {
+  const { period, setPeriod } = usePeriod();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -8 }}
@@ -26,10 +38,36 @@ function HeaderBase({ period, compare, onToggleCompare }: Props) {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="flex items-center gap-1.5 h-9 px-3.5 rounded-pill bg-card border border-border text-[13px] font-medium hover:bg-muted/50 transition-colors">
-          {period}
-          <ChevronDown size={14} className="text-muted-foreground" />
-        </button>
+        <div ref={ref} className="relative">
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="flex items-center gap-1.5 h-9 px-3.5 rounded-pill bg-card border border-border text-[13px] font-medium hover:bg-muted/50 transition-colors"
+          >
+            {period}
+            <ChevronDown size={14} className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+          </button>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-0 mt-2 w-[200px] bg-card border border-border rounded-lg shadow-lg z-40 py-1.5"
+            >
+              {PERIODS.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => { setPeriod(p as Period); setOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-[12.5px] text-left hover:bg-muted/50 transition-colors ${
+                    p === period ? "text-primary font-medium" : "text-foreground/85"
+                  }`}
+                >
+                  {p}
+                  {p === period && <Check size={13} />}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </div>
 
         <button
           onClick={onToggleCompare}

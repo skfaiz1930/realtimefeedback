@@ -69,8 +69,56 @@ const Demographics = () => {
     return has ? { score: 54, segment: "Sales + 0–1 year tenure" } : null;
   }, [selected]);
 
+  // Problem Snapshot: auto-find worst combination across active filters
+  const orgAvg = 72;
+  const snapshot = useMemo(() => {
+    const allRows: { label: string; score: number; cut: string; key: string }[] = [
+      ...dataDept.map(([l, s]) => ({ label: l, score: s, cut: "dept", key: "dept" })),
+      ...dataLevel.map(([l, s]) => ({ label: l, score: s, cut: "level", key: "level" })),
+      ...dataTenure.map(([l, s]) => ({ label: l, score: s, cut: "tenure", key: "tenure" })),
+      ...dataGender.map(([l, s]) => ({ label: l, score: s, cut: "gender", key: "gender" })),
+    ].filter((r) => selected[r.key]?.includes(r.label));
+
+    if (!allRows.length) return null;
+    // Worst single segment
+    const worstSingle = allRows.reduce((a, b) => (b.score < a.score ? b : a));
+
+    // If Sales + 0–1 year both active, surface the combined cluster (54)
+    const combo = selected.dept?.includes("Sales") && selected.tenure?.includes("0–1 year")
+      ? { label: "Sales dept + 0–1 year tenure", score: 54 }
+      : null;
+
+    const best = combo && combo.score < worstSingle.score ? combo : { label: worstSingle.label, score: worstSingle.score };
+    return { ...best, gap: orgAvg - best.score };
+  }, [selected]);
+
   return (
     <PageShell>
+      {/* Problem Snapshot — always visible at top */}
+      {snapshot && (
+        <motion.section
+          key={`${snapshot.label}-${snapshot.score}`}
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="mb-5 rounded-[12px] flex items-start gap-3 px-5 py-4 shadow-card"
+          style={{ background: "#FFF8F8", border: "1px solid #F4D4D9", borderLeft: "3px solid #C8102E" }}
+        >
+          <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <AlertTriangle size={16} />
+          </div>
+          <div className="flex-1">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">Problem Snapshot</div>
+            <p className="text-[14px] mt-1 text-foreground leading-relaxed">
+              <span className="font-medium">Lowest scoring segment:</span>{" "}
+              <span className="font-semibold">{snapshot.label}</span>{" "}
+              → <span className="font-semibold tabular-nums">{snapshot.score}/100</span>{" "}
+              <span className="text-muted-foreground">({snapshot.gap > 0 ? snapshot.gap : 0} pts below org average)</span>
+            </p>
+          </div>
+        </motion.section>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5">
         {/* Main */}
         <div>
