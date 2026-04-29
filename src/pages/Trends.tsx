@@ -107,53 +107,89 @@ const Trends = () => {
 
         <div className="h-[360px] relative">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={rows} margin={{ top: 10, right: 16, bottom: 8, left: -10 }}>
-              <CartesianGrid stroke="#F0F0EE" vertical={false} />
-              <XAxis dataKey="cycle" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={{ stroke: "#EEEEEC" }} tickLine={false} />
-              <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#EEEEEC" }} />
-              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="plainline" />
-              {(Object.keys(lineMeta) as LineKey[]).map((k) =>
-                visible[k] ? (
-                  <Line
-                    key={k}
-                    type="monotone"
-                    dataKey={k}
-                    stroke={lineMeta[k].color}
-                    strokeWidth={lineMeta[k].dashed ? 1.5 : 2.5}
-                    strokeDasharray={lineMeta[k].dashed ? "4 4" : undefined}
-                    dot={{ r: 3 }}
-                    activeDot={{ r: 5 }}
-                    isAnimationActive
-                    animationDuration={600}
+            {yoy ? (
+              <BarChart data={yoyData} margin={{ top: 28, right: 16, bottom: 8, left: -10 }} barCategoryGap="22%">
+                <CartesianGrid stroke="#F0F0EE" vertical={false} />
+                <XAxis dataKey="dimension" tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#EEEEEC" }} tickLine={false} />
+                <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip cursor={{ fill: "rgba(0,0,0,0.03)" }} contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #EEEEEC" }} />
+                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
+                <Bar dataKey="Apr 2025" fill="#D1D5DB" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600} />
+                <Bar dataKey="Apr 2026" fill="#C8102E" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600}>
+                  <LabelList
+                    dataKey="Apr 2026"
+                    position="top"
+                    content={(props: any) => {
+                      const { x, y, width, index } = props;
+                      const row = yoyData[index];
+                      const delta = row["Apr 2026"] - row["Apr 2025"];
+                      return (
+                        <text
+                          x={x + width / 2}
+                          y={y - 8}
+                          textAnchor="middle"
+                          fontSize={11}
+                          fontWeight={600}
+                          fill="#16A34A"
+                        >
+                          +{delta} pts
+                        </text>
+                      );
+                    }}
                   />
-                ) : null
-              )}
-              {markers.map((m) => (
-                <ReferenceLine
-                  key={m.x}
-                  x={m.x}
-                  stroke={m.color}
-                  strokeDasharray="4 4"
-                  label={{ value: m.label, fill: m.color, fontSize: 10, position: "insideTopRight" }}
-                />
-              ))}
-            </LineChart>
+                </Bar>
+              </BarChart>
+            ) : (
+              <LineChart data={rows} margin={{ top: 10, right: 16, bottom: 8, left: -10 }}>
+                <CartesianGrid stroke="#F0F0EE" vertical={false} />
+                <XAxis dataKey="cycle" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={{ stroke: "#EEEEEC" }} tickLine={false} />
+                <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#EEEEEC" }} />
+                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="plainline" />
+                {(Object.keys(lineMeta) as LineKey[]).map((k) =>
+                  visible[k] ? (
+                    <Line
+                      key={k}
+                      type="monotone"
+                      dataKey={k}
+                      stroke={lineMeta[k].color}
+                      strokeWidth={lineMeta[k].dashed ? 1.5 : 2.5}
+                      strokeDasharray={lineMeta[k].dashed ? "4 4" : undefined}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
+                      isAnimationActive
+                      animationDuration={600}
+                    />
+                  ) : null
+                )}
+                {markers.map((m) => (
+                  <ReferenceLine
+                    key={m.x}
+                    x={m.x}
+                    stroke={m.color}
+                    strokeDasharray="4 4"
+                    label={{ value: m.label, fill: m.color, fontSize: 10, position: "insideTopRight" }}
+                  />
+                ))}
+              </LineChart>
+            )}
           </ResponsiveContainer>
         </div>
 
-        <div className="flex flex-wrap gap-2 mt-3">
-          {markers.map((m) => (
-            <button
-              key={m.x}
-              onClick={() => setPopover(m)}
-              className="text-[11px] px-2.5 py-1 rounded-pill border hover:bg-muted/40 transition-colors"
-              style={{ borderColor: m.color, color: m.color }}
-            >
-              ▌ {m.x} — {m.label}
-            </button>
-          ))}
-        </div>
+        {!yoy && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {markers.map((m) => (
+              <button
+                key={m.x}
+                onClick={() => setPopover(m)}
+                className="text-[11px] px-2.5 py-1 rounded-pill border hover:bg-muted/40 transition-colors"
+                style={{ borderColor: m.color, color: m.color }}
+              >
+                ▌ {m.x} — {m.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {popover && (
           <motion.div
