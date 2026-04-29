@@ -8,6 +8,7 @@ import Index from "./pages/Index.tsx";
 import Heatmap from "./pages/Heatmap.tsx";
 import Demographics from "./pages/Demographics.tsx";
 import Trends from "./pages/Trends.tsx";
+import CultureMap from "./pages/CultureMap.tsx";
 import Comments from "./pages/Comments.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Index />} />
         <Route path="/heatmap" element={<Heatmap />} />
         <Route path="/demographics" element={<Demographics />} />
+        <Route path="/culture-map" element={<CultureMap />} />
         <Route path="/trends" element={<Trends />} />
         <Route path="/comments" element={<Comments />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
