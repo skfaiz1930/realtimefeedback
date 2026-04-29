@@ -2,6 +2,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Bell, Check, ChevronDown } from "lucide-react";
 import { PERIODS, Period, usePeriod } from "@/lib/periodContext";
+import { AskPulse } from "./AskPulse";
 
 interface Props {
   compare: boolean;
@@ -26,18 +27,23 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
-      className="flex flex-wrap items-center justify-between gap-4 mb-8"
+      className="mb-8"
     >
-      <div>
-        <h1 className="text-[22px] font-medium tracking-tight">
-          Good morning, Priya <span className="inline-block">👋</span>
-        </h1>
-        <p className="text-[14px] text-muted-foreground mt-0.5">
-          Here's what needs your attention today.
-        </p>
-      </div>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-[22px] font-medium tracking-tight">
+            Good morning, Priya <span className="inline-block">👋</span>
+          </h1>
+          <p className="text-[14px] text-muted-foreground mt-0.5">
+            Here's what needs your attention today.
+          </p>
+        </div>
 
-      <div className="flex items-center gap-2">
+        <div className="hidden md:block relative z-30">
+          <AskPulse />
+        </div>
+
+        <div className="flex items-center gap-2">
         <div ref={ref} className="relative">
           <button
             onClick={() => setOpen((o) => !o)}
