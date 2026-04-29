@@ -33,7 +33,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar active={active} onChange={setActive} />
+      <Sidebar />
       <AIPanel />
 
       <main className="md:pl-[220px] lg:pr-[300px] pb-20 md:pb-8">
@@ -185,7 +185,7 @@ const Index = () => {
         <PanelRightOpen size={18} />
       </button>
 
-      <MobileNav active={active} onChange={setActive} />
+      <MobileNav />
 
       {/* Dimension drawer */}
       <Drawer open={!!dimDrawer} onClose={() => setDimDrawer(null)} title={dimDrawer ? `${dimDrawer.label} — Sub-questions` : ""}>
