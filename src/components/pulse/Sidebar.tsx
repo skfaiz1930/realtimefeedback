@@ -1,21 +1,18 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2 } from "lucide-react";
 
 const items = [
-  { id: "overview", label: "Overview", icon: Home },
-  { id: "managers", label: "Managers", icon: Users },
-  { id: "heatmap",  label: "Heatmap",  icon: Grid3x3 },
-  { id: "trends",   label: "Trends",   icon: LineChart },
-  { id: "comments", label: "Comments", icon: MessageSquare },
+  { to: "/",             label: "Overview",     icon: Home },
+  { to: "/managers",     label: "Managers",     icon: Users },
+  { to: "/demographics", label: "Demographics", icon: UserCircle2, sub: true },
+  { to: "/heatmap",      label: "Heatmap",      icon: Grid3x3 },
+  { to: "/trends",       label: "Trends",       icon: LineChart },
+  { to: "/comments",     label: "Comments",     icon: MessageSquare },
 ];
 
-interface Props {
-  active: string;
-  onChange: (id: string) => void;
-}
-
-function SidebarBase({ active, onChange }: Props) {
+function SidebarBase() {
   return (
     <motion.aside
       initial={{ opacity: 0, x: -10 }}
@@ -48,23 +45,30 @@ function SidebarBase({ active, onChange }: Props) {
       <nav className="px-3 mt-2 flex-1">
         {items.map((item, i) => {
           const Icon = item.icon;
-          const isActive = active === item.id;
           return (
-            <motion.button
-              key={item.id}
+            <motion.div
+              key={item.to}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 + i * 0.03, duration: 0.2 }}
-              onClick={() => onChange(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 my-0.5 rounded-pill text-[13px] transition-colors ${
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
-              }`}
             >
-              <Icon size={16} strokeWidth={2} />
-              <span className="font-medium">{item.label}</span>
-            </motion.button>
+              <NavLink
+                to={item.to}
+                end={item.to === "/"}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-3 py-2.5 my-0.5 rounded-pill text-[13px] transition-colors ${
+                    item.sub ? "ml-6" : ""
+                  } ${
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                  }`
+                }
+              >
+                <Icon size={item.sub ? 14 : 16} strokeWidth={2} />
+                <span className="font-medium">{item.label}</span>
+              </NavLink>
+            </motion.div>
           );
         })}
       </nav>
@@ -72,12 +76,7 @@ function SidebarBase({ active, onChange }: Props) {
       {/* Bottom */}
       <div className="px-4 pb-5 space-y-3">
         <button
-          onClick={() => onChange("settings")}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-pill text-[13px] transition-colors ${
-            active === "settings"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
-          }`}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-pill text-[13px] text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-colors"
         >
           <Settings size={16} />
           <span className="font-medium">Settings</span>
