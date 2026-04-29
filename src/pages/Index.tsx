@@ -9,6 +9,8 @@ import { ManagerCard } from "@/components/pulse/ManagerCard";
 import { AIPanel } from "@/components/pulse/AIPanel";
 import { Drawer } from "@/components/pulse/Drawer";
 import { MobileNav } from "@/components/pulse/MobileNav";
+import { PeriodSummaryAI } from "@/components/pulse/PeriodSummaryAI";
+import { CoachingBrief } from "@/components/pulse/CoachingBrief";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
 
