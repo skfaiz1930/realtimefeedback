@@ -19,6 +19,7 @@ const Index = () => {
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
+  const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
   const sortedManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
