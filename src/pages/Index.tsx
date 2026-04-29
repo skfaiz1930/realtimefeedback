@@ -239,9 +239,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            <p className="mt-5 text-[13px] text-muted-foreground leading-relaxed">
-              Detailed manager profile, score breakdown by dimension, and recommended next steps will appear here.
-            </p>
+            <CoachingBrief manager={mgrDrawer} />
           </div>
         )}
       </Drawer>
