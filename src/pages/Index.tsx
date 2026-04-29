@@ -48,15 +48,17 @@ const Index = () => {
               suffix="/100"
               trend={{ dir: "up", text: "+3 pts vs last cycle", tone: "success" }}
               delay={200}
+              duration={1000}
               refreshKey={refreshKey}
-              extra={
-                <div className="ml-auto w-full max-w-[80px] h-1 rounded-full bg-bartrack overflow-hidden self-end mb-1.5">
+              belowValue={
+                <div className="w-full h-[6px] rounded-[3px] overflow-hidden" style={{ background: "#F0F0EE" }}>
                   <motion.div
                     key={refreshKey}
                     initial={{ width: 0 }}
                     animate={{ width: "72%" }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
-                    className="h-full bg-primary"
+                    transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
+                    className="h-full rounded-[3px]"
+                    style={{ background: "#C8102E" }}
                   />
                 </div>
               }
@@ -66,20 +68,32 @@ const Index = () => {
               value={48}
               trend={{ dir: "neutral", text: "of 52 total", tone: "muted" }}
               delay={280}
+              duration={800}
               refreshKey={refreshKey}
               extra={
-                <svg width="36" height="36" viewBox="0 0 36 36" className="ml-auto">
-                  <circle cx="18" cy="18" r="14" fill="none" stroke="hsl(var(--bar-track))" strokeWidth="3" />
-                  <motion.circle
-                    cx="18" cy="18" r="14" fill="none"
-                    stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
-                    transform="rotate(-90 18 18)"
-                    initial={{ strokeDasharray: "0 88" }}
-                    animate={{ strokeDasharray: `${(48 / 52) * 88} 88` }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                  />
-                </svg>
+                (() => {
+                  const size = 40;
+                  const stroke = 4;
+                  const r = (size - stroke) / 2;
+                  const c = 2 * Math.PI * r;
+                  const pct = 48 / 52;
+                  return (
+                    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="ml-auto">
+                      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F0F0EE" strokeWidth={stroke} />
+                      <motion.circle
+                        cx={size / 2} cy={size / 2} r={r} fill="none"
+                        stroke="#C8102E" strokeWidth={stroke} strokeLinecap="round"
+                        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+                        strokeDasharray={c}
+                        initial={{ strokeDashoffset: c }}
+                        animate={{ strokeDashoffset: c * (1 - pct) }}
+                        transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                      />
+                    </svg>
+                  );
+                })()
               }
+              belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
             <MetricCard
               label="Response Rate"
@@ -87,6 +101,7 @@ const Index = () => {
               suffix="%"
               trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
               delay={360}
+              duration={900}
               refreshKey={refreshKey}
             />
             <MetricCard
@@ -94,6 +109,7 @@ const Index = () => {
               value={6}
               trend={{ dir: "down", text: "2 resolved since last cycle", tone: "success" }}
               delay={440}
+              duration={600}
               refreshKey={refreshKey}
               extra={<AlertCircle size={16} className="text-primary ml-1" />}
             />
