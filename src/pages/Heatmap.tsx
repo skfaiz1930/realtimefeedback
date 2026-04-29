@@ -237,17 +237,45 @@ const Heatmap = () => {
                         {g.dim} <span className="text-muted-foreground font-normal">— {g.rows.length} questions</span>
                       </td>
                     </tr>
-                    {g.rows.map((q, idx) => (
+                    {g.rows.map((q, idx) => {
+                      const flag = findingsByQ.get(q.id);
+                      const isPulsing = pulseQ === q.id;
+                      return (
                       <motion.tr
                         key={q.id}
+                        ref={(el) => { rowRefs.current[q.id] = el; }}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2, delay: idx * 0.02 }}
+                        animate={
+                          isPulsing
+                            ? { opacity: 1, backgroundColor: ["#FEF3C7", "#FFFFFF", "#FEF3C7", "#FFFFFF"] }
+                            : { opacity: 1 }
+                        }
+                        transition={
+                          isPulsing
+                            ? { duration: 2, times: [0, 0.25, 0.5, 1] }
+                            : { duration: 0.2, delay: idx * 0.02 }
+                        }
                         className="border-b border-border hover:bg-[#FFF5F5] transition-colors"
                         style={{ height: 48 }}
                       >
                         <td className="px-5 text-[13px] text-foreground truncate max-w-0" title={q.text}>
-                          <div className="truncate">{q.text}</div>
+                          <div className="truncate flex items-center gap-1.5">
+                            {flag && (
+                              <TooltipProvider delayDuration={150}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="shrink-0 cursor-help" style={{ color: "#7C3AED" }}>
+                                      <Sparkles size={12} />
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-[280px] text-[12px]">
+                                    AI flagged: {flag.finding}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                            <span className="truncate">{q.text}</span>
+                          </div>
                         </td>
                         <td>
                           <span className="inline-block px-2 py-0.5 rounded-pill text-[11px] bg-muted text-muted-foreground">{q.theme}</span>
@@ -256,7 +284,8 @@ const Heatmap = () => {
                           <td key={r.key} className="text-center"><ScoreCell v={q[r.key]} /></td>
                         ))}
                       </motion.tr>
-                    ))}
+                      );
+                    })}
                   </Fragment>
                 ))}
 
