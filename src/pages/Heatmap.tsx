@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
@@ -218,7 +218,7 @@ const Heatmap = () => {
                         ))}
                       </motion.tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
 
                 {/* Bottom average */}
