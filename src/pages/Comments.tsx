@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
 
@@ -120,7 +120,7 @@ function Donut() {
 
 function ThemeCard({ t }: { t: Theme }) {
   const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? t.quotes : t.quotes.slice(0, 2);
+  
 
   return (
     <motion.div
