@@ -12,7 +12,6 @@ import { MobileNav } from "@/components/pulse/MobileNav";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
 
 const Index = () => {
-  const [active, setActive] = useState("overview");
   const [compare, setCompare] = useState(false);
   const [period] = useState("Apr 2026 Cycle");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -33,7 +32,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar active={active} onChange={setActive} />
+      <Sidebar />
       <AIPanel />
 
       <main className="md:pl-[220px] lg:pr-[300px] pb-20 md:pb-8">
@@ -185,7 +184,7 @@ const Index = () => {
         <PanelRightOpen size={18} />
       </button>
 
-      <MobileNav active={active} onChange={setActive} />
+      <MobileNav />
 
       {/* Dimension drawer */}
       <Drawer open={!!dimDrawer} onClose={() => setDimDrawer(null)} title={dimDrawer ? `${dimDrawer.label} — Sub-questions` : ""}>

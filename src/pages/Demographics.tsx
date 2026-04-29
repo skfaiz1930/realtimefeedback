@@ -1,0 +1,154 @@
+import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { AlertTriangle, CheckCircle2, ChevronDown } from "lucide-react";
+import { PageShell } from "@/components/pulse/PageShell";
+
+type FilterGroup = { title: string; key: string; options: string[]; defaults: string[] };
+
+const groups: FilterGroup[] = [
+  { title: "Department", key: "dept",   options: ["Engineering", "Sales", "Product", "Operations", "HR", "Finance"], defaults: ["Engineering", "Sales", "Product", "Operations", "HR", "Finance"] },
+  { title: "Level",      key: "level",  options: ["Individual Contributor", "Team Lead", "Manager", "Senior Manager"], defaults: ["Individual Contributor", "Team Lead", "Manager", "Senior Manager"] },
+  { title: "Tenure",     key: "tenure", options: ["0–1 year", "1–3 years", "3–5 years", "5+ years"], defaults: ["0–1 year", "1–3 years", "3–5 years", "5+ years"] },
+  { title: "Gender",     key: "gender", options: ["Male", "Female", "Non-binary / Other"], defaults: ["Male", "Female", "Non-binary / Other"] },
+];
+
+const dataDept   = [["Engineering", 74], ["Sales", 58], ["Product", 71], ["Operations", 63], ["HR", 82], ["Finance", 77]] as [string, number][];
+const dataLevel  = [["Individual Contributor", 67], ["Team Lead", 72], ["Manager", 74], ["Senior Manager", 81]] as [string, number][];
+const dataTenure = [["0–1 year", 59], ["1–3 years", 68], ["3–5 years", 76], ["5+ years", 80]] as [string, number][];
+const dataGender = [["Male", 72], ["Female", 70], ["Non-binary / Other", 68]] as [string, number][];
+
+function BarRow({ label, score }: { label: string; score: number }) {
+  const flag = score < 65;
+  return (
+    <div className="grid grid-cols-[180px_1fr_60px] items-center gap-4 py-1.5">
+      <div className="flex items-center gap-1.5 text-[13px] text-foreground">
+        {flag && <AlertTriangle size={13} className="text-[#D97706]" />}
+        <span className="truncate">{label}</span>
+      </div>
+      <div className="h-8 w-full rounded-md overflow-hidden" style={{ background: "#F0F0EE" }}>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${score}%` }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="h-full rounded-md"
+          style={{ background: "#C8102E" }}
+        />
+      </div>
+      <div className="text-[13px] font-semibold text-right tabular-nums">{score}<span className="text-muted-foreground font-normal">/100</span></div>
+    </div>
+  );
+}
+
+function Section({ title, rows }: { title: string; rows: [string, number][] }) {
+  return (
+    <section className="bg-card border border-border rounded-lg shadow-card p-5 mb-4">
+      <h3 className="text-[14px] font-medium mb-3">{title}</h3>
+      <div>{rows.map(([l, s]) => <BarRow key={l} label={l} score={s} />)}</div>
+    </section>
+  );
+}
+
+const Demographics = () => {
+  const [open, setOpen] = useState<Record<string, boolean>>({ dept: true, level: true, tenure: true, gender: true });
+  const [selected, setSelected] = useState<Record<string, string[]>>(
+    Object.fromEntries(groups.map((g) => [g.key, g.defaults]))
+  );
+
+  const toggle = (key: string, opt: string) => {
+    setSelected((s) => {
+      const list = s[key];
+      return { ...s, [key]: list.includes(opt) ? list.filter((o) => o !== opt) : [...list, opt] };
+    });
+  };
+
+  const clearAll = () => setSelected(Object.fromEntries(groups.map((g) => [g.key, []])));
+
+  // Problem cluster: when Sales + 0–1 year both selected
+  const cluster = useMemo(() => {
+    const has = selected.dept?.includes("Sales") && selected.tenure?.includes("0–1 year");
+    return has ? { score: 54, segment: "Sales + 0–1 year tenure" } : null;
+  }, [selected]);
+
+  return (
+    <PageShell>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5">
+        {/* Main */}
+        <div>
+          {cluster ? (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}
+              className="mb-4 rounded-[12px] flex items-start gap-2.5 px-4 py-3"
+              style={{ background: "#FEF2F2", borderLeft: "3px solid #C8102E" }}
+            >
+              <span className="text-[14px]">🔴</span>
+              <p className="text-[13px] text-foreground/85 leading-relaxed">
+                <span className="font-semibold">Problem cluster detected:</span> {cluster.segment} employees score {cluster.score}/100 — significantly below org average of 72.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}
+              className="mb-4 rounded-[12px] flex items-start gap-2.5 px-4 py-3"
+              style={{ background: "#F0FDF4", borderLeft: "3px solid #16A34A" }}
+            >
+              <CheckCircle2 size={16} className="text-success mt-0.5 shrink-0" />
+              <p className="text-[13px] text-foreground/85 leading-relaxed">
+                <span className="font-semibold">No critical clusters detected</span> in current filter selection.
+              </p>
+            </motion.div>
+          )}
+
+          <Section title="Score by Department" rows={dataDept} />
+          <Section title="Score by Level"      rows={dataLevel} />
+          <Section title="Score by Tenure"     rows={dataTenure} />
+          <Section title="Score by Gender"     rows={dataGender} />
+        </div>
+
+        {/* Filter panel */}
+        <aside className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
+          <div className="text-[13px] font-medium text-muted-foreground mb-4">Filter by</div>
+          <div className="space-y-4">
+            {groups.map((g) => (
+              <div key={g.key} className="border-b border-border pb-3 last:border-b-0">
+                <button
+                  onClick={() => setOpen((o) => ({ ...o, [g.key]: !o[g.key] }))}
+                  className="w-full flex items-center justify-between text-[13px] font-medium mb-2"
+                >
+                  {g.title}
+                  <ChevronDown size={14} className={`transition-transform ${open[g.key] ? "" : "-rotate-90"}`} />
+                </button>
+                {open[g.key] && (
+                  <div className="space-y-1.5">
+                    {g.options.map((o) => {
+                      const checked = selected[g.key]?.includes(o);
+                      return (
+                        <label key={o} className="flex items-center gap-2 text-[12px] cursor-pointer text-foreground/85">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggle(g.key, o)}
+                            className="w-3.5 h-3.5 rounded border-border accent-[#C8102E]"
+                          />
+                          {o}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <button onClick={clearAll} className="mt-4 text-[12px] text-primary/80 hover:text-primary transition-colors">
+            Clear all
+          </button>
+          <button className="mt-3 w-full h-10 rounded-[10px] bg-primary text-primary-foreground text-[13px] font-medium hover:opacity-95 transition-opacity">
+            Apply
+          </button>
+        </aside>
+      </div>
+    </PageShell>
+  );
+};
+
+export default Demographics;
