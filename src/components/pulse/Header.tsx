@@ -95,6 +95,11 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
           PS
         </div>
       </div>
+      </div>
+
+      <div className="md:hidden mt-4 relative z-30">
+        <AskPulse />
+      </div>
     </motion.header>
   );
 }
