@@ -24,9 +24,9 @@ function ManagerCardBase({ manager, index, onClick }: Props) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: 0.6 + index * 0.03, ease: "easeOut" }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.02, borderLeftColor: "#C8102E", borderLeftWidth: 2 }}
       onClick={onClick}
-      className="shrink-0 w-[200px] text-left bg-card border border-border rounded-lg p-4 shadow-card hover:shadow-cardHover transition-shadow cursor-pointer"
+      className="shrink-0 w-[200px] text-left bg-card border border-border rounded-lg p-4 shadow-card cursor-pointer"
       style={{ transitionDuration: "150ms" }}
     >
       <div className="flex items-start justify-between">

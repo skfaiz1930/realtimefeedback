@@ -30,7 +30,10 @@ function AIPanelBase() {
           <h3 className="mt-1 text-[16px] font-semibold tracking-tight">This Cycle Summary</h3>
 
           <div className={`relative mt-3 p-4 rounded-md bg-background overflow-hidden ${refreshing ? "shimmer" : ""}`}>
-            <p className={`text-[13px] leading-relaxed text-foreground/85 ${refreshing ? "opacity-0" : ""}`}>
+            <p
+              className={`text-foreground/85 ${refreshing ? "opacity-0" : ""}`}
+              style={{ fontSize: "14px", lineHeight: 1.7 }}
+            >
               {aiSummary}
             </p>
           </div>
@@ -43,6 +46,9 @@ function AIPanelBase() {
             Refresh summary
           </button>
         </section>
+
+        {/* Divider */}
+        <div className="border-t border-border" />
 
         {/* Recommended actions */}
         <section>
@@ -66,17 +72,16 @@ function AIPanelBase() {
           <h3 className="text-[13px] font-semibold mb-3">Response by Respondent Type</h3>
           <div className="space-y-3">
             {respondentTypes.map((r, i) => (
-              <div key={r.label}>
-                <div className="flex items-center justify-between text-[12px] mb-1.5">
-                  <span className="text-foreground/80">{r.label}</span>
-                  <span className="text-muted-foreground font-medium">{r.value}%</span>
-                </div>
-                <div className="h-1.5 w-full rounded-[3px] bg-bartrack overflow-hidden">
+              <div key={r.label} className="grid grid-cols-[1fr_auto] gap-x-3 items-center">
+                <div className="text-[12px] text-foreground/80">{r.label}</div>
+                <div className="text-[12px] text-muted-foreground font-medium tabular-nums">{r.value}%</div>
+                <div className="h-[6px] w-full rounded-[3px] overflow-hidden col-span-2 mt-1.5" style={{ background: "#F0F0EE" }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${r.value}%` }}
                     transition={{ duration: 0.6, delay: 0.8 + i * 0.08, ease: "easeOut" }}
-                    className="h-full bg-primary rounded-[3px]"
+                    className="h-full rounded-[3px]"
+                    style={{ background: "#C8102E" }}
                   />
                 </div>
               </div>

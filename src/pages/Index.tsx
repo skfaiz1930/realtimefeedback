@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, HelpCircle, PanelRightOpen } from "lucide-react";
+import { AlertCircle, ChevronRight, HelpCircle, PanelRightOpen } from "lucide-react";
 import { Sidebar } from "@/components/pulse/Sidebar";
 import { Header } from "@/components/pulse/Header";
 import { MetricCard } from "@/components/pulse/MetricCard";
@@ -19,6 +19,7 @@ const Index = () => {
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
+  const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
   const sortedManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
@@ -47,15 +48,17 @@ const Index = () => {
               suffix="/100"
               trend={{ dir: "up", text: "+3 pts vs last cycle", tone: "success" }}
               delay={200}
+              duration={1000}
               refreshKey={refreshKey}
-              extra={
-                <div className="ml-auto w-full max-w-[80px] h-1 rounded-full bg-bartrack overflow-hidden self-end mb-1.5">
+              belowValue={
+                <div className="w-full h-[6px] rounded-[3px] overflow-hidden" style={{ background: "#F0F0EE" }}>
                   <motion.div
                     key={refreshKey}
                     initial={{ width: 0 }}
                     animate={{ width: "72%" }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
-                    className="h-full bg-primary"
+                    transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
+                    className="h-full rounded-[3px]"
+                    style={{ background: "#C8102E" }}
                   />
                 </div>
               }
@@ -65,20 +68,32 @@ const Index = () => {
               value={48}
               trend={{ dir: "neutral", text: "of 52 total", tone: "muted" }}
               delay={280}
+              duration={800}
               refreshKey={refreshKey}
               extra={
-                <svg width="36" height="36" viewBox="0 0 36 36" className="ml-auto">
-                  <circle cx="18" cy="18" r="14" fill="none" stroke="hsl(var(--bar-track))" strokeWidth="3" />
-                  <motion.circle
-                    cx="18" cy="18" r="14" fill="none"
-                    stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round"
-                    transform="rotate(-90 18 18)"
-                    initial={{ strokeDasharray: "0 88" }}
-                    animate={{ strokeDasharray: `${(48 / 52) * 88} 88` }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                  />
-                </svg>
+                (() => {
+                  const size = 40;
+                  const stroke = 4;
+                  const r = (size - stroke) / 2;
+                  const c = 2 * Math.PI * r;
+                  const pct = 48 / 52;
+                  return (
+                    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="ml-auto">
+                      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F0F0EE" strokeWidth={stroke} />
+                      <motion.circle
+                        cx={size / 2} cy={size / 2} r={r} fill="none"
+                        stroke="#C8102E" strokeWidth={stroke} strokeLinecap="round"
+                        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+                        strokeDasharray={c}
+                        initial={{ strokeDashoffset: c }}
+                        animate={{ strokeDashoffset: c * (1 - pct) }}
+                        transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                      />
+                    </svg>
+                  );
+                })()
               }
+              belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
             <MetricCard
               label="Response Rate"
@@ -86,6 +101,7 @@ const Index = () => {
               suffix="%"
               trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
               delay={360}
+              duration={900}
               refreshKey={refreshKey}
             />
             <MetricCard
@@ -93,6 +109,7 @@ const Index = () => {
               value={6}
               trend={{ dir: "down", text: "2 resolved since last cycle", tone: "success" }}
               delay={440}
+              duration={600}
               refreshKey={refreshKey}
               extra={<AlertCircle size={16} className="text-primary ml-1" />}
             />
@@ -132,10 +149,28 @@ const Index = () => {
               <h2 className="text-[16px] font-medium tracking-tight">Teams Needing Attention</h2>
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             </div>
-            <div className="flex gap-3 overflow-x-auto scrollbar-thin pb-3 -mx-1 px-1">
-              {sortedManagers.map((m, i) => (
-                <ManagerCard key={m.id} manager={m} index={i} onClick={() => setMgrDrawer(m)} />
-              ))}
+            <div className="relative">
+              <div
+                ref={mgrScrollRef}
+                className="flex gap-3 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1 scroll-smooth"
+              >
+                {sortedManagers.map((m, i) => (
+                  <ManagerCard key={m.id} manager={m} index={i} onClick={() => setMgrDrawer(m)} />
+                ))}
+              </div>
+              {/* right fade */}
+              <div
+                className="pointer-events-none absolute right-0 top-0 bottom-3 w-[60px]"
+                style={{ background: "linear-gradient(to right, rgba(247,247,245,0), rgba(247,247,245,1))" }}
+              />
+              {/* scroll arrow */}
+              <button
+                aria-label="Scroll right"
+                onClick={() => mgrScrollRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-card border border-border shadow-card flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
           </motion.section>
         </div>
