@@ -190,7 +190,7 @@ const Heatmap = () => {
                 transition={{ duration: 0.2 }}
               >
                 {grouped.map((g) => (
-                  <>
+                  <Fragment key={g.dim}>
                     <tr key={`h-${g.dim}`} style={{ background: "#F7F7F5" }}>
                       <td colSpan={2 + respCols.filter((r) => activeResp[r.key]).length}
                         className="px-5 py-2 text-[13px] font-medium"
