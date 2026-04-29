@@ -16,7 +16,7 @@ import { usePeriod } from "@/lib/periodContext";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
-  const { period, snapshot } = usePeriod();
+  usePeriod(); // ensures provider context exists; AI summary reads it directly
   const [refreshKey, setRefreshKey] = useState(0);
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
