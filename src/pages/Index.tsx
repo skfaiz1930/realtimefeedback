@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, HelpCircle, PanelRightOpen } from "lucide-react";
+import { AlertCircle, ChevronRight, HelpCircle, PanelRightOpen } from "lucide-react";
 import { Sidebar } from "@/components/pulse/Sidebar";
 import { Header } from "@/components/pulse/Header";
 import { MetricCard } from "@/components/pulse/MetricCard";
