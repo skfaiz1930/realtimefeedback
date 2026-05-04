@@ -222,6 +222,9 @@ const Heatmap = () => {
                     </th>
                   )
                 ))}
+                <th className="text-center text-[11px] uppercase tracking-wide text-muted-foreground font-medium py-3">
+                  vs Industry
+                </th>
               </tr>
             </thead>
             <AnimatePresence mode="wait">
@@ -235,15 +238,16 @@ const Heatmap = () => {
                 {grouped.map((g) => (
                   <Fragment key={g.dim}>
                     <tr key={`h-${g.dim}`} style={{ background: "#F7F7F5" }}>
-                      <td colSpan={2 + respCols.filter((r) => activeResp[r.key]).length}
+                      <td colSpan={3 + respCols.filter((r) => activeResp[r.key]).length}
                         className="px-5 py-2 text-[13px] font-medium"
                         style={{ borderLeft: `3px solid ${dimMeta[g.dim].color}`, color: "#C8102E" }}>
-                        {g.dim} <span className="text-muted-foreground font-normal">— {g.rows.length} questions</span>
+                        {g.dim} <span className="text-muted-foreground font-normal">— {g.rows.length} questions · industry {INDUSTRY[g.dim]}</span>
                       </td>
                     </tr>
                     {g.rows.map((q, idx) => {
                       const flag = findingsByQ.get(q.id);
                       const isPulsing = pulseQ === q.id;
+                      const dInd = q.team - INDUSTRY[q.dim];
                       return (
                       <motion.tr
                         key={q.id}
@@ -287,6 +291,11 @@ const Heatmap = () => {
                         {respCols.map((r) => activeResp[r.key] && (
                           <td key={r.key} className="text-center"><ScoreCell v={q[r.key]} /></td>
                         ))}
+                        <td className="text-center">
+                          <span className={`text-[12px] font-semibold tabular-nums ${dInd > 0 ? "text-success" : dInd < 0 ? "text-danger" : "text-muted-foreground"}`}>
+                            {dInd > 0 ? "+" : ""}{dInd}
+                          </span>
+                        </td>
                       </motion.tr>
                       );
                     })}
