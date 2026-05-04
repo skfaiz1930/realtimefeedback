@@ -63,6 +63,15 @@ function Section({ title, rows }: { title: string; rows: [string, number][] }) {
 }
 
 const Demographics = () => {
+  const { period, snapshot: periodSnap } = usePeriod();
+  const adj = (rows: [string, number][], salt: string): [string, number][] =>
+    rows.map(([l, s]) => [l, Math.max(20, Math.min(98, Math.round(s + cycleNoise(period, salt + ":" + l, 10))))] as [string, number]);
+  const dataDept   = useMemo(() => adj(baseDept,   "dept"),   [period]);
+  const dataLevel  = useMemo(() => adj(baseLevel,  "level"),  [period]);
+  const dataTenure = useMemo(() => adj(baseTenure, "tenure"), [period]);
+  const dataGender = useMemo(() => adj(baseGender, "gender"), [period]);
+  const managerCount = useMemo(() => getManagersForCycle(period, periodSnap.delta).length, [period, periodSnap.delta]);
+
   const [open, setOpen] = useState<Record<string, boolean>>({ dept: true, level: true, tenure: true, gender: true });
   const [selected, setSelected] = useState<Record<string, string[]>>(
     Object.fromEntries(groups.map((g) => [g.key, g.defaults]))
@@ -94,17 +103,13 @@ const Demographics = () => {
     ].filter((r) => selected[r.key]?.includes(r.label));
 
     if (!allRows.length) return null;
-    // Worst single segment
     const worstSingle = allRows.reduce((a, b) => (b.score < a.score ? b : a));
-
-    // If Sales + 0–1 year both active, surface the combined cluster (54)
     const combo = selected.dept?.includes("Sales") && selected.tenure?.includes("0–1 year")
       ? { label: "Sales dept + 0–1 year tenure", score: 54 }
       : null;
-
     const best = combo && combo.score < worstSingle.score ? combo : { label: worstSingle.label, score: worstSingle.score };
     return { ...best, gap: orgAvg - best.score };
-  }, [selected]);
+  }, [selected, dataDept, dataLevel, dataTenure, dataGender]);
 
   return (
     <PageShell>
