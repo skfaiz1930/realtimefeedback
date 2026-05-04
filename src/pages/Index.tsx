@@ -18,6 +18,9 @@ import { BenchmarkChips } from "@/components/pulse/BenchmarkChips";
 import { getManagersForCycle } from "@/lib/managerPool";
 import { TopPerformingTeams } from "@/components/pulse/TopPerformingTeams";
 import { CycleComparisonSection } from "@/components/pulse/CycleComparisonSection";
+import { TrialCountdown } from "@/components/pulse/TrialCountdown";
+import { TeamDrilldown } from "@/components/pulse/TeamDrilldown";
+import { DimensionDrilldown } from "@/components/pulse/DimensionDrilldown";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
@@ -50,6 +53,8 @@ const Index = () => {
       <main className="md:pl-[var(--sidebar-w,220px)] lg:pr-[300px] pb-20 md:pb-8 transition-[padding] duration-200">
         <div className="max-w-[1100px] mx-auto px-5 md:px-8 pt-7">
           <Header compare={compare} onToggleCompare={handleCompare} />
+
+          <TrialCountdown />
 
           {/* AI-generated period summary */}
           <PeriodSummaryAI />
