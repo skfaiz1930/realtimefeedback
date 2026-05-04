@@ -7,19 +7,11 @@ import {
 } from "recharts";
 import { PageShell } from "@/components/pulse/PageShell";
 import { scoreColor } from "@/lib/scoreColor";
+import { INDUSTRY, INTERNAL } from "@/lib/benchmarks";
+import { usePeriod } from "@/lib/periodContext";
 
 type Row = { cycle: string; Connect: number; Develop: number; Inspire: number; Overall: number };
 
-const rows: Row[] = [
-  { cycle: "Aug 2025", Connect: 68, Develop: 58, Inspire: 72, Overall: 66 },
-  { cycle: "Sep 2025", Connect: 70, Develop: 57, Inspire: 73, Overall: 67 },
-  { cycle: "Oct 2025", Connect: 69, Develop: 55, Inspire: 71, Overall: 65 },
-  { cycle: "Nov 2025", Connect: 71, Develop: 59, Inspire: 74, Overall: 68 },
-  { cycle: "Dec 2025", Connect: 72, Develop: 60, Inspire: 75, Overall: 69 },
-  { cycle: "Jan 2026", Connect: 70, Develop: 58, Inspire: 73, Overall: 67 },
-  { cycle: "Mar 2026", Connect: 71, Develop: 64, Inspire: 76, Overall: 69 },
-  { cycle: "Apr 2026", Connect: 74, Develop: 61, Inspire: 78, Overall: 71 },
-];
 
 type LineKey = "Connect" | "Develop" | "Inspire" | "Overall";
 const lineMeta: Record<LineKey, { color: string; dashed?: boolean }> = {
@@ -52,12 +44,12 @@ function CustomTooltip({ active, payload, label }: any) {
   );
 }
 
-// YoY data: Apr 2025 vs Apr 2026
+// YoY data: prior year vs current year per dimension
 const yoyData = [
-  { dimension: "Connect", "Apr 2025": 61, "Apr 2026": 74 },
-  { dimension: "Develop", "Apr 2025": 52, "Apr 2026": 61 },
-  { dimension: "Inspire", "Apr 2025": 68, "Apr 2026": 78 },
-  { dimension: "Overall", "Apr 2025": 60, "Apr 2026": 71 },
+  { dimension: "Connect", "Prev Year": 61, "This Year": 74, "Industry": INDUSTRY.Connect },
+  { dimension: "Develop", "Prev Year": 52, "This Year": 61, "Industry": INDUSTRY.Develop },
+  { dimension: "Inspire", "Prev Year": 68, "This Year": 78, "Industry": INDUSTRY.Inspire },
+  { dimension: "Overall", "Prev Year": 60, "This Year": 71, "Industry": INDUSTRY.Overall },
 ];
 
 const Trends = () => {
