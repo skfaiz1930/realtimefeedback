@@ -87,10 +87,10 @@ export function CoachingBrief({ manager }: Props) {
           )}
           {text && (
             <div className="prose prose-sm max-w-none text-[13px] leading-relaxed
-              prose-headings:text-[12px] prose-headings:font-semibold prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-primary prose-headings:mt-4 prose-headings:mb-1.5 first:prose-headings:mt-0
-              prose-p:my-1.5 prose-p:text-foreground/90
-              prose-ul:my-1.5 prose-ul:pl-5 prose-li:my-0.5 prose-li:text-foreground/90
-              prose-ol:my-1.5 prose-ol:pl-5
+              prose-headings:text-[12.5px] prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-primary prose-headings:mt-7 prose-headings:mb-2.5 prose-headings:pb-1.5 prose-headings:border-b prose-headings:border-border first:prose-headings:mt-0
+              prose-p:my-2 prose-p:text-foreground/90
+              prose-ul:my-2 prose-ul:pl-5 prose-li:my-1 prose-li:text-foreground/90
+              prose-ol:my-2 prose-ol:pl-5
               prose-strong:text-foreground prose-strong:font-semibold">
               <ReactMarkdown>{text}</ReactMarkdown>
               {loading && <span className="inline-block w-1 h-3.5 ml-0.5 bg-primary/70 animate-pulse align-middle" />}
