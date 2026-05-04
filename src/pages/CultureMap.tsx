@@ -21,6 +21,20 @@ const quadrants = [
 
 export default function CultureMap() {
   const [hover, setHover] = useState<string | null>(null);
+  const { period, snapshot } = usePeriod();
+  const managers = useMemo(() => getManagersForCycle(period, snapshot.delta), [period, snapshot.delta]);
+  const scores = useMemo(() => {
+    const o: Record<string, { self: number; team: number }> = {};
+    managers.forEach((m) => {
+      const selfBoost = cycleNoise(period, m.id + ":self", 18);
+      const teamBoost = cycleNoise(period, m.id + ":team", 14);
+      o[m.id] = {
+        self: Math.max(20, Math.min(98, Math.round(m.score + selfBoost + 4))),
+        team: Math.max(20, Math.min(98, Math.round(m.score + teamBoost - 2))),
+      };
+    });
+    return o;
+  }, [managers, period]);
 
   // Plot geometry: percentage based inside an aspect-square chart
   const toX = (v: number) => `${v}%`;
