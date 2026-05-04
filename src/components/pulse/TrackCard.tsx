@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Send, Eye } from "lucide-react";
+import { ArrowDown, ArrowUp, Eye } from "lucide-react";
 import { type DevelopmentTrack, type ManagerNudge, managerById, weakestFor, weeksElapsed, trackStatusLabel } from "@/lib/tracks";
 
 interface Props {
@@ -56,7 +56,7 @@ export function TrackCard({ track, nudges, index, onView, onSend }: Props) {
       <div className="mt-3">
         <div className="flex items-center justify-between text-[10.5px] text-muted-foreground mb-1">
           <span>Week {Math.min(weeks + 1, track.weeks_total)} of {track.weeks_total}</span>
-          <span>{trackNudges.length} nudges sent</span>
+          <span>{trackNudges.filter((n) => n.status !== "scheduled").length} sent · {trackNudges.filter((n) => n.status === "scheduled").length} scheduled</span>
         </div>
         <div className="h-1.5 rounded-full overflow-hidden bg-muted">
           <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.6, delay: 0.1 + index * 0.05 }} className="h-full bg-primary rounded-full" />
@@ -65,10 +65,7 @@ export function TrackCard({ track, nudges, index, onView, onSend }: Props) {
 
       <div className="mt-4 flex items-center gap-2">
         <button onClick={onView} className="flex-1 h-8 rounded-pill border border-border text-[12px] font-medium hover:bg-muted/50 flex items-center justify-center gap-1.5">
-          <Eye size={12} /> View plan
-        </button>
-        <button onClick={onSend} className="flex-1 h-8 rounded-pill bg-primary text-primary-foreground text-[12px] font-medium flex items-center justify-center gap-1.5">
-          <Send size={12} /> Send nudge
+          <Eye size={12} /> View plan & schedule
         </button>
       </div>
     </motion.div>

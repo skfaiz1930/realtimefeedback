@@ -8,7 +8,7 @@ import { TrackDrawer } from "@/components/pulse/TrackDrawer";
 import { managers } from "@/lib/data";
 import {
   type DevelopmentTrack, type ManagerNudge,
-  listTracks, listNudges, startTrack, weakestFor, managerById,
+  listTracks, listNudges, startTrack, weakestFor, managerById, deliverDueNudges,
 } from "@/lib/tracks";
 
 export default function DevelopmentTracks() {
@@ -19,6 +19,7 @@ export default function DevelopmentTracks() {
 
   const refresh = async () => {
     try {
+      await deliverDueNudges();
       const [t, n] = await Promise.all([listTracks(), listNudges()]);
       setTracks(t.filter((x) => x.status !== "completed"));
       setNudges(n);
@@ -28,21 +29,22 @@ export default function DevelopmentTracks() {
 
   useEffect(() => { refresh(); }, []);
 
-  const trackedIds = useMemo(() => new Set(tracks.map((t) => t.manager_id)), [tracks]);
-  const eligible = managers.filter((m) => (m.risk === "at-risk" || m.risk === "watch") && !trackedIds.has(m.id));
-  const cycleNudges = nudges.length;
-  const improving = tracks.filter((t) => nudges.filter((n) => n.track_id === t.id).length >= 3).length;
-
   const handleStart = async (managerId: string) => {
     const m = managerById(managerId);
     if (!m) return;
     const focus = weakestFor(m).key;
     try {
       await startTrack(managerId, focus);
-      toast.success(`${m.name} added to development track`);
+      toast.success(`${m.name} added — 6 weeks of nudges scheduled automatically`);
       refresh();
     } catch { toast.error("Failed to start track"); }
   };
+
+  const trackedIds = useMemo(() => new Set(tracks.map((t) => t.manager_id)), [tracks]);
+  const eligible = managers.filter((m) => (m.risk === "at-risk" || m.risk === "watch") && !trackedIds.has(m.id));
+  const cycleNudges = nudges.length;
+  const improving = tracks.filter((t) => nudges.filter((n) => n.track_id === t.id).length >= 3).length;
+
 
   return (
     <PageShell>

@@ -56,11 +56,13 @@ export type Database = {
           id: string
           manager_id: string
           opened_at: string | null
+          scheduled_for: string | null
           sent_at: string
           status: string
           subject: string
           template_key: string | null
           track_id: string | null
+          week_number: number | null
         }
         Insert: {
           acted_at?: string | null
@@ -70,11 +72,13 @@ export type Database = {
           id?: string
           manager_id: string
           opened_at?: string | null
+          scheduled_for?: string | null
           sent_at?: string
           status?: string
           subject: string
           template_key?: string | null
           track_id?: string | null
+          week_number?: number | null
         }
         Update: {
           acted_at?: string | null
@@ -84,11 +88,13 @@ export type Database = {
           id?: string
           manager_id?: string
           opened_at?: string | null
+          scheduled_for?: string | null
           sent_at?: string
           status?: string
           subject?: string
           template_key?: string | null
           track_id?: string | null
+          week_number?: number | null
         }
         Relationships: [
           {
