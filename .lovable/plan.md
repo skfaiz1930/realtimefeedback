@@ -1,86 +1,82 @@
-# Manager Development Tracker — Nudges & Focused Journey
+## Goals
 
-Add a new capability that turns each at-risk / watch manager's weakest dimension into a personalized **Nudge Plan**, and puts those managers on a **Development Track** that the CHRO can monitor over time.
+1. **Benchmarks everywhere**: show Industry benchmark + Internal benchmark (org / prior-cycle baseline) on every key visual.
+2. **Cycle granularity**: support Monthly, Quarterly, and custom Date cycles, with full mock data for each.
+3. **Collapsible sidebar**: let users collapse the left nav to a narrow icon rail and reopen it.
 
-## What the user will see
+---
 
-### 1. New sidebar item: "Development Tracks"
-Route: `/development-tracks`. Placed between **Culture Map** and **Trends**. Icon: `Target`.
+## 1. Benchmarks (Industry + Internal)
 
-### 2. New page: Development Tracks
-Three sections stacked:
+Create `src/lib/benchmarks.ts` with shared mock benchmarks:
+- **Industry**: Connect 70, Develop 65, Inspire 72, Overall 69 (source: "GMI Industry Index 2026")
+- **Internal**: org 12-cycle rolling avg per dimension (computed from period mock data)
 
-**A. Header strip**
-"6 managers on active development tracks · 18 nudges sent this cycle · 4 showing improvement"
+Add a small reusable `<BenchmarkChips dimension="Connect" value={74} />` component that shows two pills: `Industry 70 (+4)` and `Internal 68 (+6)` with green/red delta colors and a tooltip explaining each source.
 
-**B. Track cards grid (2 columns on desktop, 1 on mobile)**
-One card per manager currently on a track. Each card shows:
-- Avatar + name + team size
-- Risk pill + current CDI score with delta
-- **Weakest dimension** chip (e.g. "Develop · 52/100") — auto-derived as the lowest-scoring dimension for that manager
-- **Track status**: `Just started` / `Week 2 of 6` / `Improving` / `Stalled` (with colored dot)
-- Progress bar (weeks elapsed vs 6-week track)
-- **Active nudges count**: "3 active nudges"
-- Buttons: `View plan` (opens drawer) · `Send new nudge` (opens nudge composer)
+Apply it to:
+- **Overview (`Index.tsx`)**: under "Org Health Score" MetricCard (belowValue) and inside each `CDIBar` row.
+- **Heatmap**: extra column "vs Industry" + colored chip per question; bottom average row also shows internal & industry deltas.
+- **Trends line chart**: two `ReferenceLine`s — dashed gray "Industry 69" and dotted blue "Internal avg 68"; legend entries; YoY chart gets a third bar group "Industry 2026".
+- **Demographics**: each `BarRow` gets a thin marker tick on the bar at the industry score for that cut, with tooltip.
+- **Culture Map**: crosshair lines move from fixed 70 to dynamic Industry (70) lines; quadrant labels reflect "above/below industry".
+- **Development Tracks → Impact**: projected uplift compared against industry benchmark line.
+- **Comments**: sentiment donut shows "Industry positive avg 48%" reference arc.
 
-**C. Eligible managers strip**
-Horizontal scroller of managers NOT yet on a track but flagged at-risk/watch. Each shows a `+ Start track` button.
+Color convention: industry = neutral gray dashed; internal = primary red dashed.
 
-### 3. Track detail drawer (right side, opens on "View plan")
-- Manager header (same style as existing manager drawer)
-- **Focus area** banner: "Focus: Develop — score 52, dropped 9 pts this cycle"
-- **AI-generated 6-week Development Plan** (streamed via new edge function, markdown). Sections: Week 1–2 Foundations, Week 3–4 Practice, Week 5–6 Reinforce, Success signals to watch.
-- **Nudge timeline**: list of nudges sent — date, channel (Email / Slack / In-app), title, status (Sent / Opened / Acted on)
-- **Suggested nudges** (3 AI suggestions): each a small card with title, 1-line rationale, `Send` button
-- "Pause track" / "Mark complete" footer actions
+---
 
-### 4. Nudge composer modal
-Opens from `Send new nudge`. Fields:
-- Channel (Email / Slack / In-app) — segmented control
-- Template dropdown (pre-filled by weakest dimension): e.g. for Develop → "Career conversation prompt", "Feedback framework share", "Skill goal check-in"
-- Subject + body (editable, AI pre-fills based on template + manager context)
-- `✦ Improve with AI` button regenerates body
-- Send / Cancel
+## 2. Cycle types (Month / Quarter / Date) + mock data
 
-### 5. Cross-page touches
-- **Overview page**: each manager card in "Teams Needing Attention" gets a small `On track` badge (green) when active, or a `+ Track` quick action on hover.
-- **Manager drawer (existing)**: add an "On Development Track" section under Coaching Brief showing weak area + active nudges count + link to full plan.
+Refactor `src/lib/periodContext.tsx`:
+- Add `cycleType: "month" | "quarter" | "date"` and `setCycleType`.
+- Replace `PERIODS` with three lists:
+  - **Monthly** (12 entries: May 2025 → Apr 2026)
+  - **Quarterly** (Q3 2024 → Q2 2026, 8 entries)
+  - **Date range** (custom start/end picker using shadcn Calendar; 4 preset ranges seeded with mock snapshots)
+- Expand `snapshots` map with mock data for every new period (org, delta, best, worst, atRisk, plus per-dimension Connect/Develop/Inspire scores).
+- Add `historicalRows()` helper that returns the right time series for the active `cycleType` (used by Trends + Heatmap deltas).
 
-## How it works (technical)
+Update `Header.tsx` cycle dropdown:
+- Top row: 3 segmented tabs `Month | Quarter | Date`.
+- Below: list of periods for the chosen type. For "Date", show a shadcn Popover + Calendar (range mode) with `pointer-events-auto`.
+- Selecting any option calls `setPeriod` + `setCycleType`, toasts "Data updated for {label}".
 
-### Database (new tables, RLS enabled, public read for demo since app has no auth yet — same posture as rest of app)
-```
-development_tracks
-  id uuid pk, manager_id text, focus_dimension text,
-  start_date timestamptz default now(), status text default 'active',
-  weeks_total int default 6, created_at timestamptz default now()
+Wire `Trends.tsx` and `Index.tsx` MetricCards to `historicalRows()` so charts + deltas re-render on cycle-type change.
 
-manager_nudges
-  id uuid pk, track_id uuid fk, manager_id text,
-  channel text, template_key text, subject text, body text,
-  status text default 'sent', sent_at timestamptz default now(),
-  opened_at timestamptz, acted_at timestamptz
-```
-For the demo we keep `manager_id` as text matching `src/lib/data.ts` ids. Public RLS policies (select/insert/update for anon) — consistent with the app's current no-auth demo state.
+---
 
-### Edge functions
-- `development-plan` — streams a 6-week markdown plan. Inputs: manager + focus dimension + recent score trend. Uses `google/gemini-2.5-flash` via Lovable AI gateway, mirrors `coaching-brief` structure and reuses `streamEdgeFunction`.
-- `suggest-nudges` — non-streaming JSON; returns 3 nudge suggestions `{title, rationale, suggested_subject, suggested_body}` for the focus dimension.
-- `compose-nudge` — non-streaming; given template_key + manager + dimension, returns subject + body. Used by `✦ Improve with AI`.
+## 3. Collapsible sidebar
 
-### Frontend pieces
-- `src/pages/DevelopmentTracks.tsx` — new page, wired in `App.tsx`.
-- `src/components/pulse/Sidebar.tsx` — add nav item between Culture Map and Trends.
-- `src/components/pulse/TrackCard.tsx`, `TrackDrawer.tsx`, `NudgeComposer.tsx`, `NudgeTimeline.tsx` — new components.
-- `src/lib/tracks.ts` — supabase data helpers (start track, list tracks, list nudges, send nudge, update status); derives weakest dimension from `dimensions` data.
-- Reuse existing `Drawer`, `usePeriod`, `aiStream`, markdown rendering pattern from `CoachingBrief`.
+Refactor `src/components/pulse/Sidebar.tsx`:
+- Add local state `collapsed` (persisted to `localStorage` key `pulse.sidebar.collapsed`).
+- Width animates between `220px` (expanded) and `64px` (collapsed) via framer-motion.
+- When collapsed: hide labels, user name/role, "Free Trial" pill, and "Logout" text — keep icons + initials avatar centered. Use shadcn `Tooltip` on each NavLink for the label.
+- Add a chevron toggle button at the top-right edge of the sidebar (`ChevronsLeft` / `ChevronsRight`).
+- Update `PageShell.tsx` and `Index.tsx` main padding: replace hardcoded `md:pl-[220px]` with a CSS variable `--sidebar-w` set on `<body>` (or a context value). Main uses `md:pl-[var(--sidebar-w)]`.
+- Mobile (`MobileNav`) unchanged.
 
-### Animations
-- Track cards: stagger fade-up 60ms apart.
-- Nudge timeline items: slide-in from left on append.
-- Nudge composer: scale 0.96→1 + fade 150ms.
-- "Mark complete" triggers green confetti-free check pulse on the card.
+---
 
-## Out of scope (call out)
-- Real email/Slack delivery — `Send` records the nudge and marks `status = sent`; no external integration.
-- Cross-cycle longitudinal scoring — uses current `dimensions` data; no new historical store.
+## Files to create
+- `src/lib/benchmarks.ts`
+- `src/components/pulse/BenchmarkChips.tsx`
+- `src/components/pulse/CycleTypeTabs.tsx` (used inside Header dropdown)
+
+## Files to edit
+- `src/lib/periodContext.tsx` — cycle types, expanded snapshots, helpers
+- `src/components/pulse/Header.tsx` — new dropdown UI with tabs + date picker
+- `src/components/pulse/Sidebar.tsx` — collapsible
+- `src/components/pulse/PageShell.tsx` — dynamic left padding
+- `src/pages/Index.tsx` — benchmarks under metric & CDI bars; dynamic padding
+- `src/components/pulse/CDIBar.tsx` — render `BenchmarkChips`
+- `src/pages/Heatmap.tsx` — vs-industry column + benchmarks in avg row
+- `src/pages/Trends.tsx` — benchmark reference lines, YoY industry bar, cycle-type aware data
+- `src/pages/Demographics.tsx` — benchmark tick on each bar
+- `src/pages/CultureMap.tsx` — dynamic benchmark crosshairs
+- `src/pages/DevelopmentTracks.tsx` — benchmark in `ImpactSection`
+- `src/components/pulse/ImpactSection.tsx` — projected vs industry
+- `src/pages/Comments.tsx` — industry sentiment reference
+
+No DB or edge-function changes required (all mock data is client-side).
