@@ -262,6 +262,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
+            <TeamDrilldown manager={mgrDrawer} />
             <ManagerTrackPanel manager={mgrDrawer} />
             <CoachingBrief manager={mgrDrawer} />
           </div>
