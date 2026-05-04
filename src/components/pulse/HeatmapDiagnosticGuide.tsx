@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { themesForPrompt } from "@/lib/commentThemes";
 
 export interface DiagnosticFinding {
   questionId: string;
@@ -41,7 +42,7 @@ export function HeatmapDiagnosticGuide({ questions, onFindingClick, onFindingsLo
     const start = Date.now();
     try {
       const { data, error: fnErr } = await supabase.functions.invoke("heatmap-diagnostic", {
-        body: { questions },
+        body: { questions, commentThemes: themesForPrompt() },
       });
       const elapsed = Date.now() - start;
       if (elapsed < 1500) await new Promise((r) => setTimeout(r, 1500 - elapsed));

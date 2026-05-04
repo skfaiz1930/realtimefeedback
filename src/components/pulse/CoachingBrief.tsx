@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { Sparkles, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { streamEdgeFunction } from "@/lib/aiStream";
+import { themesForPrompt } from "@/lib/commentThemes";
 import type { Manager } from "@/lib/data";
 
 interface Props { manager: Manager; }
@@ -22,7 +23,7 @@ export function CoachingBrief({ manager }: Props) {
 
     streamEdgeFunction({
       fn: "coaching-brief",
-      body: { manager },
+      body: { manager, commentThemes: themesForPrompt() },
       signal: controller.signal,
       onDelta: (chunk) => setText((t) => t + chunk),
       onDone: () => setLoading(false),
