@@ -9,6 +9,7 @@ import Heatmap from "./pages/Heatmap.tsx";
 import Demographics from "./pages/Demographics.tsx";
 import Trends from "./pages/Trends.tsx";
 import CultureMap from "./pages/CultureMap.tsx";
+import DevelopmentTracks from "./pages/DevelopmentTracks.tsx";
 import Comments from "./pages/Comments.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { PeriodProvider } from "./lib/periodContext";
@@ -24,6 +25,7 @@ function AnimatedRoutes() {
         <Route path="/heatmap" element={<Heatmap />} />
         <Route path="/demographics" element={<Demographics />} />
         <Route path="/culture-map" element={<CultureMap />} />
+        <Route path="/development-tracks" element={<DevelopmentTracks />} />
         <Route path="/trends" element={<Trends />} />
         <Route path="/comments" element={<Comments />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

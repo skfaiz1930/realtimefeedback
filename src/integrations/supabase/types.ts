@@ -14,7 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      development_tracks: {
+        Row: {
+          created_at: string
+          focus_dimension: string
+          id: string
+          manager_id: string
+          start_date: string
+          status: string
+          updated_at: string
+          weeks_total: number
+        }
+        Insert: {
+          created_at?: string
+          focus_dimension: string
+          id?: string
+          manager_id: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          weeks_total?: number
+        }
+        Update: {
+          created_at?: string
+          focus_dimension?: string
+          id?: string
+          manager_id?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          weeks_total?: number
+        }
+        Relationships: []
+      }
+      manager_nudges: {
+        Row: {
+          acted_at: string | null
+          body: string
+          channel: string
+          created_at: string
+          id: string
+          manager_id: string
+          opened_at: string | null
+          sent_at: string
+          status: string
+          subject: string
+          template_key: string | null
+          track_id: string | null
+        }
+        Insert: {
+          acted_at?: string | null
+          body: string
+          channel?: string
+          created_at?: string
+          id?: string
+          manager_id: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          subject: string
+          template_key?: string | null
+          track_id?: string | null
+        }
+        Update: {
+          acted_at?: string | null
+          body?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          manager_id?: string
+          opened_at?: string | null
+          sent_at?: string
+          status?: string
+          subject?: string
+          template_key?: string | null
+          track_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manager_nudges_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "development_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
