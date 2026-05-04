@@ -14,6 +14,7 @@ import { CoachingBrief } from "@/components/pulse/CoachingBrief";
 import { ManagerTrackPanel } from "@/components/pulse/ManagerTrackPanel";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
+import { BenchmarkChips } from "@/components/pulse/BenchmarkChips";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
@@ -57,16 +58,21 @@ const Index = () => {
               duration={1000}
               refreshKey={refreshKey}
               belowValue={
-                <div className="w-full h-[6px] rounded-[3px] overflow-hidden" style={{ background: "#F0F0EE" }}>
-                  <motion.div
-                    key={refreshKey}
-                    initial={{ width: 0 }}
-                    animate={{ width: "72%" }}
-                    transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-                    className="h-full rounded-[3px]"
-                    style={{ background: "#C8102E" }}
-                  />
-                </div>
+                <>
+                  <div className="w-full h-[6px] rounded-[3px] overflow-hidden" style={{ background: "#F0F0EE" }}>
+                    <motion.div
+                      key={refreshKey}
+                      initial={{ width: 0 }}
+                      animate={{ width: "72%" }}
+                      transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
+                      className="h-full rounded-[3px]"
+                      style={{ background: "#C8102E" }}
+                    />
+                  </div>
+                  <div className="mt-2">
+                    <BenchmarkChips dimension="Overall" value={72} size="xs" />
+                  </div>
+                </>
               }
             />
             <MetricCard
