@@ -83,14 +83,27 @@ function ScoreCell({ v }: { v: number }) {
 }
 
 const Heatmap = () => {
+  const { period, snapshot } = usePeriod();
   const [dimFilter, setDimFilter] = useState<"All" | Dim>("All");
   const [activeResp, setActiveResp] = useState<Record<Resp, boolean>>({
     self: true, team: true, peer: true, rm: true,
   });
 
+  const cycleQuestions = useMemo(() => {
+    const adj = (v: number, key: string) => Math.max(20, Math.min(98, Math.round(v + cycleNoise(period, key, 10))));
+    return questions.map((q) => ({
+      ...q,
+      self: adj(q.self, q.id + ":self"),
+      team: adj(q.team, q.id + ":team"),
+      peer: adj(q.peer, q.id + ":peer"),
+      rm:   adj(q.rm,   q.id + ":rm"),
+    }));
+  }, [period]);
+  const managerCount = useMemo(() => getManagersForCycle(period, snapshot.delta).length, [period, snapshot.delta]);
+
   const filtered = useMemo(
-    () => (dimFilter === "All" ? questions : questions.filter((q) => q.dim === dimFilter)),
-    [dimFilter]
+    () => (dimFilter === "All" ? cycleQuestions : cycleQuestions.filter((q) => q.dim === dimFilter)),
+    [dimFilter, cycleQuestions]
   );
 
   const colAvgs = useMemo(() => {
