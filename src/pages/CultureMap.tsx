@@ -1,18 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
-import { managers } from "@/lib/data";
-
-// Self/Team scores per manager (per spec)
-const scores: Record<string, { self: number; team: number }> = {
-  "1": { self: 72, team: 54 }, // Rahul
-  "2": { self: 68, team: 58 }, // Sneha
-  "3": { self: 74, team: 63 }, // Arjun
-  "4": { self: 65, team: 67 }, // Deepa
-  "5": { self: 78, team: 79 }, // Vikram
-  "6": { self: 81, team: 83 }, // Ananya
-};
+import { usePeriod } from "@/lib/periodContext";
+import { getManagersForCycle } from "@/lib/managerPool";
+import { cycleNoise } from "@/lib/cycleData";
 
 const dotColor = {
   "at-risk": { bg: "#C8102E", ring: "rgba(200,16,46,0.18)" },
