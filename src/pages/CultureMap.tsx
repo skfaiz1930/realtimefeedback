@@ -1,18 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
-import { managers } from "@/lib/data";
-
-// Self/Team scores per manager (per spec)
-const scores: Record<string, { self: number; team: number }> = {
-  "1": { self: 72, team: 54 }, // Rahul
-  "2": { self: 68, team: 58 }, // Sneha
-  "3": { self: 74, team: 63 }, // Arjun
-  "4": { self: 65, team: 67 }, // Deepa
-  "5": { self: 78, team: 79 }, // Vikram
-  "6": { self: 81, team: 83 }, // Ananya
-};
+import { usePeriod } from "@/lib/periodContext";
+import { getManagersForCycle } from "@/lib/managerPool";
+import { cycleNoise } from "@/lib/cycleData";
 
 const dotColor = {
   "at-risk": { bg: "#C8102E", ring: "rgba(200,16,46,0.18)" },
@@ -29,6 +21,20 @@ const quadrants = [
 
 export default function CultureMap() {
   const [hover, setHover] = useState<string | null>(null);
+  const { period, snapshot } = usePeriod();
+  const managers = useMemo(() => getManagersForCycle(period, snapshot.delta), [period, snapshot.delta]);
+  const scores = useMemo(() => {
+    const o: Record<string, { self: number; team: number }> = {};
+    managers.forEach((m) => {
+      const selfBoost = cycleNoise(period, m.id + ":self", 18);
+      const teamBoost = cycleNoise(period, m.id + ":team", 14);
+      o[m.id] = {
+        self: Math.max(20, Math.min(98, Math.round(m.score + selfBoost + 4))),
+        team: Math.max(20, Math.min(98, Math.round(m.score + teamBoost - 2))),
+      };
+    });
+    return o;
+  }, [managers, period]);
 
   // Plot geometry: percentage based inside an aspect-square chart
   const toX = (v: number) => `${v}%`;
@@ -115,13 +121,10 @@ export default function CultureMap() {
                   <motion.div
                     key={m.id}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 1, opacity: 0.85 }}
                     transition={{
-                      delay: i * 0.1,
-                      duration: 0.4,
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 16,
+                      delay: Math.min(i * 0.005, 0.6),
+                      duration: 0.25,
                     }}
                     style={{ left: toX(s.self), top: toY(s.team) }}
                     className="absolute"
@@ -131,16 +134,16 @@ export default function CultureMap() {
                       onMouseLeave={() => setHover(null)}
                       onFocus={() => setHover(m.id)}
                       onBlur={() => setHover(null)}
-                      className="relative -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[11px] font-semibold text-white shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-foreground/20"
+                      className="relative -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[8px] font-semibold text-white transition-transform hover:scale-150 hover:z-10 focus:outline-none"
                       style={{
-                        width: 36,
-                        height: 36,
+                        width: 14,
+                        height: 14,
                         background: c.bg,
-                        boxShadow: `0 0 0 6px ${c.ring}`,
+                        boxShadow: `0 0 0 2px ${c.ring}`,
                       }}
                       aria-label={`${m.name}, self ${s.self}, team ${s.team}`}
                     >
-                      {m.initials}
+                      {""}
 
                       {isHover && (
                         <div

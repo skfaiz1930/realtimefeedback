@@ -2,6 +2,9 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, CheckCircle2, ChevronDown } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
+import { usePeriod } from "@/lib/periodContext";
+import { cycleNoise } from "@/lib/cycleData";
+import { getManagersForCycle } from "@/lib/managerPool";
 
 type FilterGroup = { title: string; key: string; options: string[]; defaults: string[] };
 
@@ -12,10 +15,10 @@ const groups: FilterGroup[] = [
   { title: "Gender",     key: "gender", options: ["Male", "Female", "Non-binary / Other"], defaults: ["Male", "Female", "Non-binary / Other"] },
 ];
 
-const dataDept   = [["Engineering", 74], ["Sales", 58], ["Product", 71], ["Operations", 63], ["HR", 82], ["Finance", 77]] as [string, number][];
-const dataLevel  = [["Individual Contributor", 67], ["Team Lead", 72], ["Manager", 74], ["Senior Manager", 81]] as [string, number][];
-const dataTenure = [["0–1 year", 59], ["1–3 years", 68], ["3–5 years", 76], ["5+ years", 80]] as [string, number][];
-const dataGender = [["Male", 72], ["Female", 70], ["Non-binary / Other", 68]] as [string, number][];
+const baseDept   = [["Engineering", 74], ["Sales", 58], ["Product", 71], ["Operations", 63], ["HR", 82], ["Finance", 77]] as [string, number][];
+const baseLevel  = [["Individual Contributor", 67], ["Team Lead", 72], ["Manager", 74], ["Senior Manager", 81]] as [string, number][];
+const baseTenure = [["0–1 year", 59], ["1–3 years", 68], ["3–5 years", 76], ["5+ years", 80]] as [string, number][];
+const baseGender = [["Male", 72], ["Female", 70], ["Non-binary / Other", 68]] as [string, number][];
 
 const INDUSTRY_AVG = 69;
 function BarRow({ label, score }: { label: string; score: number }) {
@@ -60,6 +63,15 @@ function Section({ title, rows }: { title: string; rows: [string, number][] }) {
 }
 
 const Demographics = () => {
+  const { period, snapshot: periodSnap } = usePeriod();
+  const adj = (rows: [string, number][], salt: string): [string, number][] =>
+    rows.map(([l, s]) => [l, Math.max(20, Math.min(98, Math.round(s + cycleNoise(period, salt + ":" + l, 10))))] as [string, number]);
+  const dataDept   = useMemo(() => adj(baseDept,   "dept"),   [period]);
+  const dataLevel  = useMemo(() => adj(baseLevel,  "level"),  [period]);
+  const dataTenure = useMemo(() => adj(baseTenure, "tenure"), [period]);
+  const dataGender = useMemo(() => adj(baseGender, "gender"), [period]);
+  const managerCount = useMemo(() => getManagersForCycle(period, periodSnap.delta).length, [period, periodSnap.delta]);
+
   const [open, setOpen] = useState<Record<string, boolean>>({ dept: true, level: true, tenure: true, gender: true });
   const [selected, setSelected] = useState<Record<string, string[]>>(
     Object.fromEntries(groups.map((g) => [g.key, g.defaults]))
@@ -91,17 +103,13 @@ const Demographics = () => {
     ].filter((r) => selected[r.key]?.includes(r.label));
 
     if (!allRows.length) return null;
-    // Worst single segment
     const worstSingle = allRows.reduce((a, b) => (b.score < a.score ? b : a));
-
-    // If Sales + 0–1 year both active, surface the combined cluster (54)
     const combo = selected.dept?.includes("Sales") && selected.tenure?.includes("0–1 year")
       ? { label: "Sales dept + 0–1 year tenure", score: 54 }
       : null;
-
     const best = combo && combo.score < worstSingle.score ? combo : { label: worstSingle.label, score: worstSingle.score };
     return { ...best, gap: orgAvg - best.score };
-  }, [selected]);
+  }, [selected, dataDept, dataLevel, dataTenure, dataGender]);
 
   return (
     <PageShell>
@@ -157,6 +165,7 @@ const Demographics = () => {
             </motion.div>
           )}
 
+          <div className="text-[11px] text-muted-foreground mb-2">Cycle: <span className="font-medium text-foreground">{period}</span> · {managerCount} managers</div>
           <Section title="Score by Department" rows={dataDept} />
           <Section title="Score by Level"      rows={dataLevel} />
           <Section title="Score by Tenure"     rows={dataTenure} />

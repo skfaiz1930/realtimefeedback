@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
+import { usePeriod } from "@/lib/periodContext";
+import { cycleNoise } from "@/lib/cycleData";
+import { getManagersForCycle } from "@/lib/managerPool";
 
 type Sentiment = "Mostly Negative" | "Mixed" | "Mostly Positive";
 type Dim = "All" | "Connect" | "Develop" | "Inspire";
@@ -196,6 +199,13 @@ function ThemeCard({ t }: { t: Theme }) {
 const Comments = () => {
   const [dim, setDim] = useState<Dim>("All");
   const [resp, setResp] = useState("All");
+  const { period, snapshot } = usePeriod();
+  const managerCount = useMemo(() => getManagersForCycle(period, snapshot.delta).length, [period, snapshot.delta]);
+  const cycleThemes = useMemo(() => themes.map((t) => ({
+    ...t,
+    count: Math.max(8, Math.round(t.count + cycleNoise(period, t.name, 18))),
+  })), [period]);
+  const totalComments = useMemo(() => cycleThemes.reduce((s, t) => s + t.count, 0), [cycleThemes]);
 
   const dims: Dim[] = ["All", "Connect", "Develop", "Inspire"];
   const respOpts = ["All", "Manager Self", "Team Member", "Peer", "RM"];
@@ -218,11 +228,11 @@ const Comments = () => {
 
           <div className="mb-3">
             <h2 className="text-[16px] font-medium tracking-tight">Top Themes This Cycle</h2>
-            <p className="text-[12px] text-muted-foreground mt-0.5">AI-clustered from 312 open-text responses. Names removed.</p>
+            <p className="text-[12px] text-muted-foreground mt-0.5">AI-clustered from {totalComments} open-text responses across {managerCount} managers · {period}. Names removed.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {themes.map((t) => <ThemeCard key={t.name} t={t} />)}
+            {cycleThemes.map((t) => <ThemeCard key={t.name} t={t} />)}
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
+import { TrialCountdown } from "./TrialCountdown";
 
 interface Props {
   children: ReactNode;
@@ -22,6 +23,7 @@ export function PageShell({ children, withAIRail = false, rightSlot }: Props) {
       <main className={`md:pl-[var(--sidebar-w,220px)] ${withAIRail ? "lg:pr-[300px]" : ""} pb-20 md:pb-8 transition-[padding] duration-200`}>
         <div className="max-w-[1180px] mx-auto px-5 md:px-8 pt-7">
           <Header compare={compare} onToggleCompare={() => setCompare((c) => !c)} />
+          <TrialCountdown />
 
           <motion.div
             initial={{ opacity: 0, y: 8 }}
