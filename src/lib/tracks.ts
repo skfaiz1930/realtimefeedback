@@ -3,7 +3,7 @@ import { dimensions, managers, type Manager } from "@/lib/data";
 
 export type TrackStatus = "active" | "paused" | "completed";
 export type Channel = "email" | "slack" | "in-app";
-export type NudgeStatus = "sent" | "opened" | "acted";
+export type NudgeStatus = "sent" | "opened" | "acted" | "scheduled";
 
 export interface DevelopmentTrack {
   id: string;
