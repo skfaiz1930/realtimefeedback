@@ -39,7 +39,7 @@ const Index = () => {
       <Sidebar />
       <AIPanel />
 
-      <main className="md:pl-[220px] lg:pr-[300px] pb-20 md:pb-8">
+      <main className="md:pl-[var(--sidebar-w,220px)] lg:pr-[300px] pb-20 md:pb-8 transition-[padding] duration-200">
         <div className="max-w-[1100px] mx-auto px-5 md:px-8 pt-7">
           <Header compare={compare} onToggleCompare={handleCompare} />
 
