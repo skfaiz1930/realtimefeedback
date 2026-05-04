@@ -11,6 +11,7 @@ import { Drawer } from "@/components/pulse/Drawer";
 import { MobileNav } from "@/components/pulse/MobileNav";
 import { PeriodSummaryAI } from "@/components/pulse/PeriodSummaryAI";
 import { CoachingBrief } from "@/components/pulse/CoachingBrief";
+import { ManagerTrackPanel } from "@/components/pulse/ManagerTrackPanel";
 import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
 
@@ -239,6 +240,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
+            <ManagerTrackPanel manager={mgrDrawer} />
             <CoachingBrief manager={mgrDrawer} />
           </div>
         )}
