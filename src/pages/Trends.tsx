@@ -53,18 +53,22 @@ const yoyData = [
 ];
 
 const Trends = () => {
+  const { cycleType, historicalRows } = usePeriod();
+  const rows: Row[] = historicalRows();
   const [visible, setVisible] = useState<Record<LineKey, boolean>>({
     Connect: true, Develop: true, Inspire: true, Overall: true,
   });
+  const [showBenchmarks, setShowBenchmarks] = useState(true);
   const [popover, setPopover] = useState<typeof markers[number] | null>(null);
   const [yoy, setYoy] = useState(false);
+  const cycleLabel = cycleType === "quarter" ? "Quarter" : cycleType === "date" ? "Date Range" : "Month";
 
   return (
     <PageShell>
       <div className="bg-card border border-border rounded-lg shadow-card p-5 mb-5">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h2 className="text-[16px] font-medium tracking-tight">
-            {yoy ? "Year-on-Year — Apr 2025 vs Apr 2026" : "Org CDI Score — 8 Cycle Trend"}
+            {yoy ? "Year-on-Year" : `Org CDI Score — ${rows.length} ${cycleLabel} Trend`}
           </h2>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
@@ -76,6 +80,16 @@ const Trends = () => {
               }`}
             >
               Year-on-Year
+            </button>
+            <button
+              onClick={() => setShowBenchmarks((b) => !b)}
+              className={`h-7 px-3 rounded-pill text-[11px] font-medium border transition-colors ${
+                showBenchmarks
+                  ? "bg-foreground/5 border-foreground/20 text-foreground"
+                  : "bg-card text-muted-foreground border-border hover:text-foreground"
+              }`}
+            >
+              Benchmarks
             </button>
             {!yoy && (Object.keys(lineMeta) as LineKey[]).map((k) => {
               const on = visible[k];
@@ -106,15 +120,15 @@ const Trends = () => {
                 <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip cursor={{ fill: "rgba(0,0,0,0.03)" }} contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #EEEEEC" }} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
-                <Bar dataKey="Apr 2025" fill="#D1D5DB" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600} />
-                <Bar dataKey="Apr 2026" fill="#C8102E" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600}>
+                <Bar dataKey="Prev Year" fill="#D1D5DB" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600} />
+                <Bar dataKey="This Year" fill="#C8102E" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600}>
                   <LabelList
-                    dataKey="Apr 2026"
+                    dataKey="This Year"
                     position="top"
                     content={(props: any) => {
                       const { x, y, width, index } = props;
                       const row = yoyData[index];
-                      const delta = row["Apr 2026"] - row["Apr 2025"];
+                      const delta = row["This Year"] - row["Prev Year"];
                       return (
                         <text
                           x={x + width / 2}
@@ -130,6 +144,9 @@ const Trends = () => {
                     }}
                   />
                 </Bar>
+                {showBenchmarks && (
+                  <Bar dataKey="Industry" fill="#9CA3AF" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={600} />
+                )}
               </BarChart>
             ) : (
               <LineChart data={rows} margin={{ top: 10, right: 16, bottom: 8, left: -10 }}>
@@ -138,6 +155,22 @@ const Trends = () => {
                 <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#EEEEEC" }} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="plainline" />
+                {showBenchmarks && (
+                  <ReferenceLine
+                    y={INDUSTRY.Overall}
+                    stroke="#6B7280"
+                    strokeDasharray="6 4"
+                    label={{ value: `Industry ${INDUSTRY.Overall}`, fill: "#6B7280", fontSize: 10, position: "insideTopLeft" }}
+                  />
+                )}
+                {showBenchmarks && (
+                  <ReferenceLine
+                    y={INTERNAL.Overall}
+                    stroke="#C8102E"
+                    strokeDasharray="2 4"
+                    label={{ value: `Internal ${INTERNAL.Overall}`, fill: "#C8102E", fontSize: 10, position: "insideBottomLeft" }}
+                  />
+                )}
                 {(Object.keys(lineMeta) as LineKey[]).map((k) =>
                   visible[k] ? (
                     <Line
