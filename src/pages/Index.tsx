@@ -12,23 +12,30 @@ import { MobileNav } from "@/components/pulse/MobileNav";
 import { PeriodSummaryAI } from "@/components/pulse/PeriodSummaryAI";
 import { CoachingBrief } from "@/components/pulse/CoachingBrief";
 import { ManagerTrackPanel } from "@/components/pulse/ManagerTrackPanel";
-import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
+import { dimensions, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
 import { BenchmarkChips } from "@/components/pulse/BenchmarkChips";
+import { getManagersForCycle } from "@/lib/managerPool";
+import { TopPerformingTeams } from "@/components/pulse/TopPerformingTeams";
+import { CycleComparisonSection } from "@/components/pulse/CycleComparisonSection";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
-  usePeriod(); // ensures provider context exists; AI summary reads it directly
+  const { period, snapshot } = usePeriod();
   const [refreshKey, setRefreshKey] = useState(0);
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
-  const sortedManagers = useMemo(() => {
+  const attentionManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
-    return [...managers].sort((a, b) => order[a.risk] - order[b.risk]);
-  }, []);
+    const all = getManagersForCycle(period, snapshot.delta);
+    return all
+      .filter((m) => m.risk !== "healthy")
+      .sort((a, b) => order[a.risk] - order[b.risk] || a.score - b.score)
+      .slice(0, 14);
+  }, [period, snapshot.delta]);
 
   const handleCompare = () => {
     setCompare((c) => !c);
