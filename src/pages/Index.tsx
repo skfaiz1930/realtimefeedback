@@ -167,22 +167,21 @@ const Index = () => {
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-[16px] font-medium tracking-tight">Teams Needing Attention</h2>
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-[11px] text-muted-foreground">{attentionManagers.length} managers</span>
             </div>
             <div className="relative">
               <div
                 ref={mgrScrollRef}
                 className="flex gap-3 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1 scroll-smooth"
               >
-                {sortedManagers.map((m, i) => (
+                {attentionManagers.map((m, i) => (
                   <ManagerCard key={m.id} manager={m} index={i} onClick={() => setMgrDrawer(m)} />
                 ))}
               </div>
-              {/* right fade */}
               <div
                 className="pointer-events-none absolute right-0 top-0 bottom-3 w-[60px]"
                 style={{ background: "linear-gradient(to right, rgba(247,247,245,0), rgba(247,247,245,1))" }}
               />
-              {/* scroll arrow */}
               <button
                 aria-label="Scroll right"
                 onClick={() => mgrScrollRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
@@ -192,6 +191,10 @@ const Index = () => {
               </button>
             </div>
           </motion.section>
+
+          <TopPerformingTeams onClick={(m) => setMgrDrawer(m)} />
+
+          <CycleComparisonSection />
         </div>
       </main>
 
