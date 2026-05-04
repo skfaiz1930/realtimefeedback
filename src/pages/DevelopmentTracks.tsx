@@ -45,16 +45,6 @@ export default function DevelopmentTracks() {
   const cycleNudges = nudges.length;
   const improving = tracks.filter((t) => nudges.filter((n) => n.track_id === t.id).length >= 3).length;
 
-  const handleStart = async (managerId: string) => {
-    const m = managerById(managerId);
-    if (!m) return;
-    const focus = weakestFor(m).key;
-    try {
-      await startTrack(managerId, focus);
-      toast.success(`${m.name} added to development track`);
-      refresh();
-    } catch { toast.error("Failed to start track"); }
-  };
 
   return (
     <PageShell>
