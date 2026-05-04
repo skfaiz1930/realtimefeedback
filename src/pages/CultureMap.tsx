@@ -121,13 +121,10 @@ export default function CultureMap() {
                   <motion.div
                     key={m.id}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 1, opacity: 0.85 }}
                     transition={{
-                      delay: i * 0.1,
-                      duration: 0.4,
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 16,
+                      delay: Math.min(i * 0.005, 0.6),
+                      duration: 0.25,
                     }}
                     style={{ left: toX(s.self), top: toY(s.team) }}
                     className="absolute"
@@ -137,16 +134,16 @@ export default function CultureMap() {
                       onMouseLeave={() => setHover(null)}
                       onFocus={() => setHover(m.id)}
                       onBlur={() => setHover(null)}
-                      className="relative -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[11px] font-semibold text-white shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-foreground/20"
+                      className="relative -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[8px] font-semibold text-white transition-transform hover:scale-150 hover:z-10 focus:outline-none"
                       style={{
-                        width: 36,
-                        height: 36,
+                        width: 14,
+                        height: 14,
                         background: c.bg,
-                        boxShadow: `0 0 0 6px ${c.ring}`,
+                        boxShadow: `0 0 0 2px ${c.ring}`,
                       }}
                       aria-label={`${m.name}, self ${s.self}, team ${s.team}`}
                     >
-                      {m.initials}
+                      {""}
 
                       {isHover && (
                         <div
