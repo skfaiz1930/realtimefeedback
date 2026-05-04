@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/pulse/PageShell";
 import { TrackCard } from "@/components/pulse/TrackCard";
 import { TrackDrawer } from "@/components/pulse/TrackDrawer";
+import { ImpactSection } from "@/components/pulse/ImpactSection";
 import { managers } from "@/lib/data";
 import {
   type DevelopmentTrack, type ManagerNudge,
@@ -126,6 +127,8 @@ export default function DevelopmentTracks() {
           </div>
         </section>
       )}
+
+      <ImpactSection tracks={tracks} nudges={nudges} />
 
       <TrackDrawer track={drawerTrack} onClose={() => setDrawerTrack(null)} onChange={refresh} />
     </PageShell>
