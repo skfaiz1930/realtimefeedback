@@ -12,23 +12,30 @@ import { MobileNav } from "@/components/pulse/MobileNav";
 import { PeriodSummaryAI } from "@/components/pulse/PeriodSummaryAI";
 import { CoachingBrief } from "@/components/pulse/CoachingBrief";
 import { ManagerTrackPanel } from "@/components/pulse/ManagerTrackPanel";
-import { dimensions, managers, type Dimension, type Manager } from "@/lib/data";
+import { dimensions, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
 import { BenchmarkChips } from "@/components/pulse/BenchmarkChips";
+import { getManagersForCycle } from "@/lib/managerPool";
+import { TopPerformingTeams } from "@/components/pulse/TopPerformingTeams";
+import { CycleComparisonSection } from "@/components/pulse/CycleComparisonSection";
 
 const Index = () => {
   const [compare, setCompare] = useState(false);
-  usePeriod(); // ensures provider context exists; AI summary reads it directly
+  const { period, snapshot } = usePeriod();
   const [refreshKey, setRefreshKey] = useState(0);
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
-  const sortedManagers = useMemo(() => {
+  const attentionManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
-    return [...managers].sort((a, b) => order[a.risk] - order[b.risk]);
-  }, []);
+    const all = getManagersForCycle(period, snapshot.delta);
+    return all
+      .filter((m) => m.risk !== "healthy")
+      .sort((a, b) => order[a.risk] - order[b.risk] || a.score - b.score)
+      .slice(0, 14);
+  }, [period, snapshot.delta]);
 
   const handleCompare = () => {
     setCompare((c) => !c);
@@ -160,22 +167,21 @@ const Index = () => {
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-[16px] font-medium tracking-tight">Teams Needing Attention</h2>
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-[11px] text-muted-foreground">{attentionManagers.length} managers</span>
             </div>
             <div className="relative">
               <div
                 ref={mgrScrollRef}
                 className="flex gap-3 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1 scroll-smooth"
               >
-                {sortedManagers.map((m, i) => (
+                {attentionManagers.map((m, i) => (
                   <ManagerCard key={m.id} manager={m} index={i} onClick={() => setMgrDrawer(m)} />
                 ))}
               </div>
-              {/* right fade */}
               <div
                 className="pointer-events-none absolute right-0 top-0 bottom-3 w-[60px]"
                 style={{ background: "linear-gradient(to right, rgba(247,247,245,0), rgba(247,247,245,1))" }}
               />
-              {/* scroll arrow */}
               <button
                 aria-label="Scroll right"
                 onClick={() => mgrScrollRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
@@ -185,6 +191,10 @@ const Index = () => {
               </button>
             </div>
           </motion.section>
+
+          <TopPerformingTeams onClick={(m) => setMgrDrawer(m)} />
+
+          <CycleComparisonSection />
         </div>
       </main>
 
