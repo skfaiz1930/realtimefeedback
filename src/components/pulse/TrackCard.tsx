@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Send, Eye } from "lucide-react";
+import { ArrowDown, ArrowUp, Eye } from "lucide-react";
 import { type DevelopmentTrack, type ManagerNudge, managerById, weakestFor, weeksElapsed, trackStatusLabel } from "@/lib/tracks";
 
 interface Props {
