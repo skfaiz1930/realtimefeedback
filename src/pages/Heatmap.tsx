@@ -152,10 +152,9 @@ const Heatmap = () => {
     }, 50);
   }, [dimFilter]);
 
-  // Pass simplified payload to AI
   const aiPayload = useMemo(
-    () => questions.map((q) => ({ id: q.id, text: q.text, self: q.self, team: q.team, peer: q.peer, rm: q.rm })),
-    []
+    () => cycleQuestions.map((q) => ({ id: q.id, text: q.text, self: q.self, team: q.team, peer: q.peer, rm: q.rm })),
+    [cycleQuestions]
   );
 
   return (
@@ -168,14 +167,13 @@ const Heatmap = () => {
 
       <HeatmapTracksBridge findings={findings} />
 
-      {/* Insight callout */}
       <div
         className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3"
         style={{ background: "#FFFBEB", borderLeft: "3px solid #D97706" }}
       >
         <AlertTriangle size={16} className="text-[#D97706] mt-0.5 shrink-0" />
         <p className="text-[13px] text-foreground/85 leading-relaxed">
-          <span className="font-semibold">Biggest gap:</span> Develop dimension shows a 22-point gap between Manager Self score (70) and Team Member score (52). This is the primary driver of flight risk.
+          <span className="font-semibold">Cycle {period}:</span> Aggregated across <span className="font-semibold">{managerCount}</span> managers. Develop remains the largest gap driver.
         </p>
       </div>
 
