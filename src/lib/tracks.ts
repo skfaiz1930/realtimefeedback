@@ -86,7 +86,9 @@ export async function startTrack(managerId: string, focusDimension: string) {
     .select()
     .single();
   if (error) throw error;
-  return data as DevelopmentTrack;
+  const track = data as DevelopmentTrack;
+  scheduleNudgeSeries(track).catch((e) => console.error("scheduleNudgeSeries failed", e));
+  return track;
 }
 
 export async function updateTrack(id: string, patch: Partial<Pick<DevelopmentTrack, "status">>) {
@@ -94,7 +96,7 @@ export async function updateTrack(id: string, patch: Partial<Pick<DevelopmentTra
   if (error) throw error;
 }
 
-export async function sendNudge(input: Omit<ManagerNudge, "id" | "sent_at" | "opened_at" | "acted_at" | "status"> & { status?: NudgeStatus }) {
+export async function sendNudge(input: Omit<ManagerNudge, "id" | "sent_at" | "opened_at" | "acted_at" | "status" | "scheduled_for" | "week_number"> & { status?: NudgeStatus; scheduled_for?: string | null; week_number?: number | null }) {
   const { data, error } = await supabase
     .from("manager_nudges")
     .insert({ ...input, status: input.status ?? "sent" })
@@ -102,6 +104,52 @@ export async function sendNudge(input: Omit<ManagerNudge, "id" | "sent_at" | "op
     .single();
   if (error) throw error;
   return data as ManagerNudge;
+}
+
+/** Generate AI-authored nudges and insert one per week as 'scheduled' (or 'sent' if already due). */
+export async function scheduleNudgeSeries(track: DevelopmentTrack) {
+  const manager = managerById(track.manager_id);
+  if (!manager) return;
+  const { data, error } = await supabase.functions.invoke("schedule-nudges", {
+    body: { manager, focusDimension: track.focus_dimension, weeks: track.weeks_total },
+  });
+  if (error) throw error;
+  const nudges: { week: number; subject: string; body: string }[] = data?.nudges ?? [];
+  if (!nudges.length) return;
+  const start = new Date(track.start_date).getTime();
+  const week = 7 * 24 * 60 * 60 * 1000;
+  const rows = nudges
+    .sort((a, b) => a.week - b.week)
+    .slice(0, track.weeks_total)
+    .map((n) => {
+      const when = new Date(start + (n.week - 1) * week);
+      const due = when.getTime() <= Date.now();
+      return {
+        track_id: track.id,
+        manager_id: track.manager_id,
+        channel: "in-app",
+        template_key: `auto-week-${n.week}`,
+        subject: n.subject,
+        body: n.body,
+        status: due ? "sent" : "scheduled",
+        week_number: n.week,
+        scheduled_for: when.toISOString(),
+        sent_at: due ? new Date().toISOString() : when.toISOString(),
+      };
+    });
+  const { error: insErr } = await supabase.from("manager_nudges").insert(rows);
+  if (insErr) throw insErr;
+}
+
+/** Promote scheduled nudges whose time has arrived to 'sent'. Safe to call on app load. */
+export async function deliverDueNudges() {
+  const nowIso = new Date().toISOString();
+  const { error } = await supabase
+    .from("manager_nudges")
+    .update({ status: "sent", sent_at: nowIso })
+    .eq("status", "scheduled")
+    .lte("scheduled_for", nowIso);
+  if (error) console.error("deliverDueNudges", error);
 }
 
 export function managerById(id: string): Manager | undefined {
