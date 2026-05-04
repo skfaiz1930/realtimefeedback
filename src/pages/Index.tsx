@@ -231,6 +231,7 @@ const Index = () => {
                 </div>
               ))}
             </div>
+            <DimensionDrilldown dim={dimDrawer} />
           </div>
         )}
       </Drawer>
