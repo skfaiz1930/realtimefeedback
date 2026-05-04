@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { questions } = await req.json();
+    const { questions, commentThemes } = await req.json();
     if (!Array.isArray(questions)) {
       return new Response(JSON.stringify({ error: "Missing questions array" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -49,9 +49,13 @@ Deno.serve(async (req: Request) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
-    const system = `You are an HR diagnostic specialist at Great Manager Institute. When looking at a 25-question survey heatmap with scores by respondent type, identify the 3 most diagnostically important cells — not just lowest scores. Consider: self-team gaps (awareness issues), unexpected drops in previously strong areas, questions where ALL respondent types score low (systemic issues), and questions where peer and RM scores diverge from team scores. Write one sharp diagnostic sentence per finding.`;
+    const system = `You are an HR diagnostic specialist at Great Manager Institute. When looking at a 25-question survey heatmap with scores by respondent type, identify the 3 most diagnostically important cells — not just lowest scores. Consider: self-team gaps (awareness issues), unexpected drops in previously strong areas, questions where ALL respondent types score low (systemic issues), and questions where peer and RM scores diverge from team scores. When qualitative comment themes are provided, prefer findings that are corroborated by those themes (mention this in the finding sentence). Write one sharp diagnostic sentence per finding.`;
 
-    const userPrompt = `Analyse this heatmap data and identify the 3 most diagnostically important observations:\n\n${JSON.stringify(questions)}\n\nFor each finding return: questionId, questionText (short), finding (1 sharp sentence, max 20 words, include specific scores), findingType (awareness_gap | systemic_low | unexpected_drop | divergence), urgency (high | medium). Return exactly 3 findings.`;
+    const themeBlock = Array.isArray(commentThemes) && commentThemes.length
+      ? `\n\nQualitative comment themes (org-wide, for corroboration):\n${JSON.stringify(commentThemes)}`
+      : "";
+
+    const userPrompt = `Analyse this heatmap data and identify the 3 most diagnostically important observations:\n\n${JSON.stringify(questions)}${themeBlock}\n\nFor each finding return: questionId, questionText (short), finding (1 sharp sentence, max 22 words, include specific scores; reference comment-theme corroboration if applicable), findingType (awareness_gap | systemic_low | unexpected_drop | divergence), urgency (high | medium). Return exactly 3 findings.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

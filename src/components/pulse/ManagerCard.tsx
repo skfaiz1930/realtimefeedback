@@ -1,7 +1,8 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Target } from "lucide-react";
 import type { Manager } from "@/lib/data";
+import { useTracksState } from "@/lib/useTracksState";
 
 const riskMeta = {
   "at-risk": { label: "At Risk",  dot: "🔴", pill: "bg-primary/10 text-primary",       avatar: "bg-primary/15 text-primary" },
@@ -18,6 +19,9 @@ interface Props {
 function ManagerCardBase({ manager, index, onClick }: Props) {
   const meta = riskMeta[manager.risk];
   const up = manager.delta > 0;
+  const { byManager, start } = useTracksState();
+  const onTrack = !!byManager[manager.id];
+  const eligible = manager.risk === "at-risk" || manager.risk === "watch";
 
   return (
     <motion.button
@@ -26,7 +30,7 @@ function ManagerCardBase({ manager, index, onClick }: Props) {
       transition={{ duration: 0.3, delay: 0.6 + index * 0.03, ease: "easeOut" }}
       whileHover={{ scale: 1.02, borderLeftColor: "#C8102E", borderLeftWidth: 2 }}
       onClick={onClick}
-      className="shrink-0 w-[200px] text-left bg-card border border-border rounded-lg p-4 shadow-card cursor-pointer"
+      className="group relative shrink-0 w-[200px] text-left bg-card border border-border rounded-lg p-4 shadow-card cursor-pointer"
       style={{ transitionDuration: "150ms" }}
     >
       <div className="flex items-start justify-between">
@@ -48,12 +52,30 @@ function ManagerCardBase({ manager, index, onClick }: Props) {
         {up ? "+" : ""}{manager.delta} pts
       </div>
 
-      <div className="mt-3 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-        <span>{meta.dot}</span>
-        <span className="font-medium text-foreground/70">{meta.label}</span>
+      <div className="mt-3 flex items-center justify-between gap-1">
+        <div className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+          <span>{meta.dot}</span>
+          <span className="font-medium text-foreground/70">{meta.label}</span>
+        </div>
+        {onTrack ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-pill bg-success/10 text-success">
+            <Target size={10} /> On track
+          </span>
+        ) : eligible ? (
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(e) => { e.stopPropagation(); start(manager.id); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); start(manager.id); } }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-pill bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer"
+          >
+            <Plus size={10} /> Track
+          </span>
+        ) : null}
       </div>
     </motion.button>
   );
 }
 
 export const ManagerCard = memo(ManagerCardBase);
+

@@ -4,6 +4,7 @@ import { AlertTriangle, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
 import { scoreColor } from "@/lib/scoreColor";
 import { HeatmapDiagnosticGuide, type DiagnosticFinding } from "@/components/pulse/HeatmapDiagnosticGuide";
+import { HeatmapTracksBridge } from "@/components/pulse/HeatmapTracksBridge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Dim = "Connect" | "Develop" | "Inspire";
@@ -147,6 +148,8 @@ const Heatmap = () => {
         onFindingClick={handleFindingClick}
         onFindingsLoaded={setFindings}
       />
+
+      <HeatmapTracksBridge findings={findings} />
 
       {/* Insight callout */}
       <div

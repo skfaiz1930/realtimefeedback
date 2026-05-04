@@ -9,17 +9,18 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { manager } = await req.json();
+    const { manager, commentThemes } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
     const system =
       "You are an executive coach writing a 1-page coaching brief for an HR Head about a people-manager. " +
       "Use clear markdown with these EXACT sections in this order, each as a level-3 heading (###):\n" +
-      "### Snapshot\n### Strengths\n### Blind Spots\n### 3 Coaching Prompts\n### Suggested 1:1 Agenda\n\n" +
-      "Strengths and Blind Spots: 2-3 short bullets each. Coaching Prompts: numbered list of 3 specific, " +
-      "open-ended questions the HR Head should ask this manager. 1:1 Agenda: 4-5 bulleted timed items " +
-      "(e.g. '5 min — open with...'). Total length under 280 words. No preamble.";
+      "### Snapshot\n### What Employees Are Saying\n### Strengths\n### Blind Spots\n### 3 Coaching Prompts\n### Suggested 1:1 Agenda\n\n" +
+      "What Employees Are Saying: 2-3 short bullets pulling from provided comment themes; quote sparingly. " +
+      "Strengths and Blind Spots: 2-3 short bullets each, ground them in the comment themes when relevant. " +
+      "Coaching Prompts: numbered list of 3 specific, open-ended questions. " +
+      "1:1 Agenda: 4-5 bulleted timed items. Total length under 320 words. No preamble.";
 
     const riskNarrative =
       manager.risk === "at-risk"
@@ -28,13 +29,17 @@ Deno.serve(async (req: Request) => {
         ? "This manager is on the watch list — early warning signs."
         : "This manager is healthy — focus the brief on growth, not remediation.";
 
+    const themeBlock = Array.isArray(commentThemes) && commentThemes.length
+      ? `\n\nQualitative comment themes from this cycle (org-wide, names removed):\n${JSON.stringify(commentThemes, null, 2)}`
+      : "";
+
     const user = `Manager: ${manager.name}
 Team size: ${manager.teamSize}
 CDI Score: ${manager.score}/100
 Trend vs last cycle: ${manager.delta >= 0 ? "+" : ""}${manager.delta} pts
 Risk band: ${manager.risk}
 
-Context: ${riskNarrative}
+Context: ${riskNarrative}${themeBlock}
 
 Write the coaching brief now.`;
 
