@@ -24,10 +24,12 @@ export interface ManagerNudge {
   template_key: string | null;
   subject: string;
   body: string;
-  status: NudgeStatus;
+  status: NudgeStatus | "scheduled";
   sent_at: string;
   opened_at: string | null;
   acted_at: string | null;
+  scheduled_for?: string | null;
+  week_number?: number | null;
 }
 
 /** Derive each manager's weakest dimension from the org-level data
