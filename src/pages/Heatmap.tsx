@@ -6,6 +6,7 @@ import { scoreColor } from "@/lib/scoreColor";
 import { HeatmapDiagnosticGuide, type DiagnosticFinding } from "@/components/pulse/HeatmapDiagnosticGuide";
 import { HeatmapTracksBridge } from "@/components/pulse/HeatmapTracksBridge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { INDUSTRY } from "@/lib/benchmarks";
 
 type Dim = "Connect" | "Develop" | "Inspire";
 type Resp = "self" | "team" | "peer" | "rm";
