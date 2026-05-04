@@ -314,6 +314,16 @@ const Heatmap = () => {
                       </div>
                     </td>
                   ))}
+                  <td className="text-center py-3">
+                    {(() => {
+                      const d = colAvgs.team - INDUSTRY.Overall;
+                      return (
+                        <span className={`text-[12px] font-semibold tabular-nums ${d > 0 ? "text-success" : d < 0 ? "text-danger" : "text-muted-foreground"}`}>
+                          {d > 0 ? "+" : ""}{d} vs ind
+                        </span>
+                      );
+                    })()}
+                  </td>
                 </tr>
               </motion.tbody>
             </AnimatePresence>
