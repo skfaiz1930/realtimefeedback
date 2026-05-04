@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
+import { usePeriod } from "@/lib/periodContext";
+import { cycleNoise } from "@/lib/cycleData";
+import { getManagersForCycle } from "@/lib/managerPool";
 
 type Sentiment = "Mostly Negative" | "Mixed" | "Mostly Positive";
 type Dim = "All" | "Connect" | "Develop" | "Inspire";
