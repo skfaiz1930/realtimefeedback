@@ -48,7 +48,9 @@ export default function CultureMap() {
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <div className="text-[15px] font-medium">Manager Self vs Team Perception</div>
-            <div className="text-[12px] text-muted-foreground mt-0.5">Each dot = one manager. Dividing lines at 70.</div>
+            <div className="text-[12px] text-muted-foreground mt-0.5">
+              Each dot = one manager. Solid lines = org avg (70). Dashed lines = industry benchmark (69).
+            </div>
           </div>
           <div className="text-[11px] text-muted-foreground">n = {managers.length}</div>
         </div>
@@ -84,6 +86,10 @@ export default function CultureMap() {
 
               {/* Outer border */}
               <div className="absolute inset-0 rounded-lg border border-border pointer-events-none" />
+
+              {/* Industry benchmark crosshair (dashed) */}
+              <div className="absolute top-0 bottom-0 border-l border-dashed border-foreground/40 pointer-events-none" style={{ left: "69%" }} />
+              <div className="absolute left-0 right-0 border-t border-dashed border-foreground/40 pointer-events-none" style={{ top: "31%" }} />
 
               {/* Axis ticks */}
               {[0, 25, 50, 75, 100].map((t) => (
