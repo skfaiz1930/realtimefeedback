@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Bell, Check, ChevronDown } from "lucide-react";
-import { PERIODS, Period, usePeriod } from "@/lib/periodContext";
+import { CycleType, usePeriod } from "@/lib/periodContext";
 import { AskPulse } from "./AskPulse";
 
 interface Props {
@@ -9,8 +9,14 @@ interface Props {
   onToggleCompare: () => void;
 }
 
+const TYPE_TABS: { key: CycleType; label: string }[] = [
+  { key: "month", label: "Month" },
+  { key: "quarter", label: "Quarter" },
+  { key: "date", label: "Date" },
+];
+
 function HeaderBase({ compare, onToggleCompare }: Props) {
-  const { period, setPeriod } = usePeriod();
+  const { period, setPeriod, cycleType, setCycleType, periodsForType } = usePeriod();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -21,6 +27,8 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const periods = periodsForType(cycleType);
 
   return (
     <motion.header
@@ -49,7 +57,7 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
             onClick={() => setOpen((o) => !o)}
             className="flex items-center gap-1.5 h-9 px-3.5 rounded-pill bg-card border border-border text-[13px] font-medium hover:bg-muted/50 transition-colors"
           >
-            {period}
+            <span className="text-muted-foreground capitalize">{cycleType}:</span> {period}
             <ChevronDown size={14} className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
           {open && (
@@ -57,20 +65,37 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 mt-2 w-[200px] bg-card border border-border rounded-lg shadow-lg z-40 py-1.5"
+              className="absolute right-0 mt-2 w-[240px] bg-card border border-border rounded-lg shadow-lg z-40 py-2"
             >
-              {PERIODS.map((p) => (
-                <button
-                  key={p}
-                  onClick={() => { setPeriod(p as Period); setOpen(false); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-[12.5px] text-left hover:bg-muted/50 transition-colors ${
-                    p === period ? "text-primary font-medium" : "text-foreground/85"
-                  }`}
-                >
-                  {p}
-                  {p === period && <Check size={13} />}
-                </button>
-              ))}
+              <div className="px-2 pb-2 flex gap-1">
+                {TYPE_TABS.map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => setCycleType(t.key)}
+                    className={`flex-1 h-7 rounded-pill text-[11px] font-medium transition-colors ${
+                      cycleType === t.key
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/50 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border pt-1 max-h-[260px] overflow-y-auto">
+                {periods.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => { setPeriod(p); setOpen(false); }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-[12.5px] text-left hover:bg-muted/50 transition-colors ${
+                      p === period ? "text-primary font-medium" : "text-foreground/85"
+                    }`}
+                  >
+                    {p}
+                    {p === period && <Check size={13} />}
+                  </button>
+                ))}
+              </div>
             </motion.div>
           )}
         </div>
@@ -83,7 +108,7 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
               : "bg-card border-border text-muted-foreground hover:text-foreground"
           }`}
         >
-          vs Mar 2026
+          vs prev
         </button>
 
         <button className="relative w-9 h-9 rounded-pill bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">

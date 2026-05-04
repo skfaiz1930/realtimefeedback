@@ -58,7 +58,7 @@ export function PeriodSummaryAI() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-              {period.replace(" Cycle", "")} — AI Cycle Summary
+              {period} — AI Cycle Summary
             </div>
             <button
               onClick={generate}

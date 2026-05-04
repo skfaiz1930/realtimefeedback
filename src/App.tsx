@@ -13,6 +13,7 @@ import DevelopmentTracks from "./pages/DevelopmentTracks.tsx";
 import Comments from "./pages/Comments.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { PeriodProvider } from "./lib/periodContext";
+import { SidebarProvider } from "./lib/sidebarState";
 
 const queryClient = new QueryClient();
 
@@ -41,9 +42,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <PeriodProvider>
-        <BrowserRouter>
-          <AnimatedRoutes />
-        </BrowserRouter>
+        <SidebarProvider>
+          <BrowserRouter>
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </SidebarProvider>
       </PeriodProvider>
     </TooltipProvider>
   </QueryClientProvider>

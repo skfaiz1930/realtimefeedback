@@ -233,16 +233,22 @@ const Comments = () => {
           <div className="mt-5 space-y-2">
             <div className="flex items-center justify-between text-[12px]">
               <span className="flex items-center gap-2"><span>✅</span>Positive</span>
-              <span className="font-medium tabular-nums">131 comments</span>
+              <span className="font-medium tabular-nums">131 comments <span className="text-muted-foreground">(42%)</span></span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
               <span className="flex items-center gap-2"><span>➖</span>Neutral</span>
-              <span className="font-medium tabular-nums">109 comments</span>
+              <span className="font-medium tabular-nums">109 comments <span className="text-muted-foreground">(35%)</span></span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
               <span className="flex items-center gap-2"><span>❌</span>Negative</span>
-              <span className="font-medium tabular-nums">72 comments</span>
+              <span className="font-medium tabular-nums">72 comments <span className="text-muted-foreground">(23%)</span></span>
             </div>
+          </div>
+
+          <div className="mt-4 p-2.5 rounded-md bg-muted/50 text-[11px] text-muted-foreground leading-relaxed">
+            <div className="font-semibold text-foreground/80 mb-1">vs Benchmarks</div>
+            Industry positive avg: <span className="font-medium text-foreground/80">48%</span> (you: 42%, <span className="text-danger font-medium">-6 pts</span>)<br/>
+            Internal 12-mo avg: <span className="font-medium text-foreground/80">39%</span> (you: 42%, <span className="text-success font-medium">+3 pts</span>)
           </div>
 
           <div className="border-t border-border my-5" />

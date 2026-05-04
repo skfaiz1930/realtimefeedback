@@ -17,15 +17,17 @@ const dataLevel  = [["Individual Contributor", 67], ["Team Lead", 72], ["Manager
 const dataTenure = [["0–1 year", 59], ["1–3 years", 68], ["3–5 years", 76], ["5+ years", 80]] as [string, number][];
 const dataGender = [["Male", 72], ["Female", 70], ["Non-binary / Other", 68]] as [string, number][];
 
+const INDUSTRY_AVG = 69;
 function BarRow({ label, score }: { label: string; score: number }) {
   const flag = score < 65;
+  const dInd = score - INDUSTRY_AVG;
   return (
-    <div className="grid grid-cols-[180px_1fr_60px] items-center gap-4 py-1.5">
+    <div className="grid grid-cols-[180px_1fr_60px_70px] items-center gap-3 py-1.5">
       <div className="flex items-center gap-1.5 text-[13px] text-foreground">
         {flag && <AlertTriangle size={13} className="text-[#D97706]" />}
         <span className="truncate">{label}</span>
       </div>
-      <div className="h-8 w-full rounded-md overflow-hidden" style={{ background: "#F0F0EE" }}>
+      <div className="relative h-8 w-full rounded-md overflow-hidden" style={{ background: "#F0F0EE" }}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${score}%` }}
@@ -33,8 +35,17 @@ function BarRow({ label, score }: { label: string; score: number }) {
           className="h-full rounded-md"
           style={{ background: "#C8102E" }}
         />
+        {/* Industry benchmark marker */}
+        <div
+          className="absolute top-0 bottom-0 w-[2px] bg-foreground/60"
+          style={{ left: `${INDUSTRY_AVG}%` }}
+          title={`Industry ${INDUSTRY_AVG}`}
+        />
       </div>
       <div className="text-[13px] font-semibold text-right tabular-nums">{score}<span className="text-muted-foreground font-normal">/100</span></div>
+      <div className={`text-[11px] text-right tabular-nums font-medium ${dInd > 0 ? "text-success" : dInd < 0 ? "text-danger" : "text-muted-foreground"}`}>
+        {dInd > 0 ? "+" : ""}{dInd} vs ind
+      </div>
     </div>
   );
 }

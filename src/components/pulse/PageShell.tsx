@@ -19,7 +19,7 @@ export function PageShell({ children, withAIRail = false, rightSlot }: Props) {
       <Sidebar />
       {rightSlot}
 
-      <main className={`md:pl-[220px] ${withAIRail ? "lg:pr-[300px]" : ""} pb-20 md:pb-8`}>
+      <main className={`md:pl-[var(--sidebar-w,220px)] ${withAIRail ? "lg:pr-[300px]" : ""} pb-20 md:pb-8 transition-[padding] duration-200`}>
         <div className="max-w-[1180px] mx-auto px-5 md:px-8 pt-7">
           <Header compare={compare} onToggleCompare={() => setCompare((c) => !c)} />
 
