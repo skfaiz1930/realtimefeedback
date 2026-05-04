@@ -32,7 +32,7 @@ export function useTracksState(): State {
     else setLoading(false);
 
     const ch = supabase
-      .channel("tracks-realtime")
+      .channel(`tracks-realtime-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "development_tracks" }, () => reload())
       .on("postgres_changes", { event: "*", schema: "public", table: "manager_nudges" }, () => reload())
       .subscribe();
