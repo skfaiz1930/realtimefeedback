@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Mail, MessageSquare, Bell, X, CheckCircle2, PauseCircle, Clock, CalendarClock } from "lucide-react";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { streamEdgeFunction } from "@/lib/aiStream";
 import {
