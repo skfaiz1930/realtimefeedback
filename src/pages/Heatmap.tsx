@@ -7,6 +7,9 @@ import { HeatmapDiagnosticGuide, type DiagnosticFinding } from "@/components/pul
 import { HeatmapTracksBridge } from "@/components/pulse/HeatmapTracksBridge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { INDUSTRY } from "@/lib/benchmarks";
+import { usePeriod } from "@/lib/periodContext";
+import { cycleNoise } from "@/lib/cycleData";
+import { getManagersForCycle } from "@/lib/managerPool";
 
 type Dim = "Connect" | "Develop" | "Inspire";
 type Resp = "self" | "team" | "peer" | "rm";
