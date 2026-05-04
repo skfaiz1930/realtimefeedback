@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Mail, MessageSquare, Bell, X, CheckCircle2, PauseCircle, Clock, CalendarClock } from "lucide-react";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { streamEdgeFunction } from "@/lib/aiStream";
 import {
@@ -117,15 +118,51 @@ export function TrackDrawer({ track, onClose, onChange }: Props) {
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> Designing 6-week plan…
               </div>
             )}
-            {plan && (
-              <div className="prose prose-sm max-w-none text-[13px] leading-relaxed
-                prose-headings:text-[11.5px] prose-headings:font-semibold prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-primary prose-headings:mt-3 prose-headings:mb-1 first:prose-headings:mt-0
-                prose-p:my-1 prose-ul:my-1 prose-ul:pl-5 prose-li:my-0.5
-                prose-strong:text-foreground prose-strong:font-semibold">
-                <ReactMarkdown>{plan}</ReactMarkdown>
-                {planLoading && <span className="inline-block w-1 h-3.5 ml-0.5 bg-primary/70 animate-pulse align-middle" />}
-              </div>
-            )}
+            {plan && (() => {
+              const lines = plan.split("\n");
+              const sections: { title: string; body: string }[] = [];
+              let current: { title: string; body: string } | null = null;
+              let preamble = "";
+              for (const line of lines) {
+                const m = line.match(/^#{1,6}\s+(.*)$/);
+                if (m) {
+                  if (current) sections.push(current);
+                  current = { title: m[1].trim(), body: "" };
+                } else if (current) {
+                  current.body += line + "\n";
+                } else {
+                  preamble += line + "\n";
+                }
+              }
+              if (current) sections.push(current);
+              const proseClass = "prose prose-sm max-w-none text-[13px] leading-relaxed prose-p:my-1 prose-ul:my-1 prose-ul:pl-5 prose-li:my-0.5 prose-strong:text-foreground prose-strong:font-semibold";
+              return (
+                <div>
+                  {preamble.trim() && (
+                    <div className={proseClass}><ReactMarkdown>{preamble}</ReactMarkdown></div>
+                  )}
+                  {sections.length > 0 ? (
+                    <Accordion type="multiple" defaultValue={sections.length ? [`s-0`] : []} className="w-full">
+                      {sections.map((s, i) => (
+                        <AccordionItem key={i} value={`s-${i}`} className="border-border">
+                          <AccordionTrigger className="py-2.5 text-[12px] font-bold uppercase tracking-wider text-primary hover:no-underline">
+                            {s.title}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className={proseClass}>
+                              <ReactMarkdown>{s.body}</ReactMarkdown>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  ) : !preamble.trim() ? (
+                    <div className={proseClass}><ReactMarkdown>{plan}</ReactMarkdown></div>
+                  ) : null}
+                  {planLoading && <span className="inline-block w-1 h-3.5 ml-0.5 bg-primary/70 animate-pulse align-middle" />}
+                </div>
+              );
+            })()}
           </section>
 
           {/* Auto-scheduled nudge timeline */}
