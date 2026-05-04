@@ -165,6 +165,7 @@ const Demographics = () => {
             </motion.div>
           )}
 
+          <div className="text-[11px] text-muted-foreground mb-2">Cycle: <span className="font-medium text-foreground">{period}</span> · {managerCount} managers</div>
           <Section title="Score by Department" rows={dataDept} />
           <Section title="Score by Level"      rows={dataLevel} />
           <Section title="Score by Tenure"     rows={dataTenure} />
