@@ -112,7 +112,7 @@ const Trends = () => {
           </div>
         </div>
 
-        <div className="h-[360px] relative">
+        <div data-tour="trends-line-chart" className="h-[360px] relative">
           <ResponsiveContainer width="100%" height="100%">
             {yoy ? (
               <BarChart data={yoyData} margin={{ top: 28, right: 16, bottom: 8, left: -10 }} barCategoryGap="22%">
