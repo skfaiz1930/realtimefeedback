@@ -17,6 +17,7 @@ import { usePeriod } from "@/lib/periodContext";
 import { BenchmarkChips } from "@/components/pulse/BenchmarkChips";
 import { getManagersForCycle } from "@/lib/managerPool";
 import { TopPerformingTeams } from "@/components/pulse/TopPerformingTeams";
+import { ResponseRateBreakdown } from "@/components/pulse/ResponseRateBreakdown";
 import { CycleComparisonSection } from "@/components/pulse/CycleComparisonSection";
 import { TrialCountdown } from "@/components/pulse/TrialCountdown";
 import { TeamDrilldown } from "@/components/pulse/TeamDrilldown";
@@ -196,6 +197,8 @@ const Index = () => {
               </button>
             </div>
           </motion.section>
+
+          <ResponseRateBreakdown />
 
           <TopPerformingTeams onClick={(m) => setMgrDrawer(m)} />
 

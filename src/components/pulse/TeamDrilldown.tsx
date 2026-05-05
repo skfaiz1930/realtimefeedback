@@ -87,7 +87,15 @@ export function TeamDrilldown({ manager }: Props) {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border p-4 bg-card grid grid-cols-2 gap-3 text-[12px]">
+      <div className="rounded-lg border border-border p-4 bg-card grid grid-cols-3 gap-3 text-[12px]">
+        <div>
+          <div className="text-muted-foreground">Response rate</div>
+          <div className="text-[18px] font-semibold mt-0.5 tabular-nums">{data.responseRate}%</div>
+          <div className="text-[10.5px] text-muted-foreground tabular-nums">{data.participation.responded}/{data.participation.invited} responded</div>
+          <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ background: "#F0F0EE" }}>
+            <div className="h-full rounded-full" style={{ width: `${data.responseRate}%`, background: "#16A34A" }} />
+          </div>
+        </div>
         <div>
           <div className="text-muted-foreground">Self vs Team gap</div>
           <div className={`text-[18px] font-semibold mt-0.5 ${data.selfVsTeamGap > 8 ? "text-warning" : "text-foreground"}`}>
