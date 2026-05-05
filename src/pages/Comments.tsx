@@ -196,11 +196,17 @@ function ThemeCard({ t }: { t: Theme }) {
   );
 }
 
+const DEPTS = ["All", "Sales", "Engineering", "Product", "Marketing", "Operations", "Customer Success", "Finance", "HR", "Design", "Data"];
+const AGES = ["All", "18-24", "25-34", "35-44", "45-54", "55+"];
+
 const Comments = () => {
   const [dim, setDim] = useState<Dim>("All");
   const [resp, setResp] = useState("All");
+  const [demoType, setDemoType] = useState<"department" | "manager" | "age">("department");
+  const [demoValue, setDemoValue] = useState<string>("All");
   const { period, snapshot } = usePeriod();
-  const managerCount = useMemo(() => getManagersForCycle(period, snapshot.delta).length, [period, snapshot.delta]);
+  const allManagers = useMemo(() => getManagersForCycle(period, snapshot.delta), [period, snapshot.delta]);
+  const managerCount = allManagers.length;
   const cycleThemes = useMemo(() => themes.map((t) => ({
     ...t,
     count: Math.max(8, Math.round(t.count + cycleNoise(period, t.name, 18))),
@@ -209,6 +215,10 @@ const Comments = () => {
 
   const dims: Dim[] = ["All", "Connect", "Develop", "Inspire"];
   const respOpts = ["All", "Manager Self", "Team Member", "Peer", "RM"];
+
+  const demoOptions = demoType === "department" ? DEPTS
+    : demoType === "age" ? AGES
+    : ["All", ...allManagers.slice(0, 30).map((m) => m.name)];
 
   return (
     <PageShell>
