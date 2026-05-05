@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSidebarState } from "@/lib/sidebarState";
+import { SidebarTrialCountdown } from "./TrialCountdown";
 
 const items = [
   { to: "/",             label: "Overview",     icon: Home },
@@ -109,11 +110,7 @@ function SidebarBase() {
           {!collapsed && <span className="font-medium">Settings</span>}
         </button>
 
-        {!collapsed && (
-          <div className="px-3 py-2 rounded-pill bg-accent/20 text-[11px] font-medium text-foreground/80 text-center">
-            Free Trial — 28 days left
-          </div>
-        )}
+        <SidebarTrialCountdown collapsed={collapsed} />
 
         <button className={`w-full flex items-center gap-2 text-[12px] text-muted-foreground hover:text-foreground transition-colors ${
           collapsed ? "justify-center" : "px-3"
