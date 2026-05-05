@@ -78,13 +78,15 @@ export default function DevelopmentTracks() {
           <div className="text-[12px] text-muted-foreground mt-1">Start a track for an at-risk or watch-list manager below.</div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div data-tour="dev-tracks-manager-list" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {tracks.map((t, i) => (
-            <TrackCard
-              key={t.id} track={t} nudges={nudges} index={i}
-              onView={() => setDrawerTrack(t)}
-              onSend={() => setDrawerTrack(t)}
-            />
+            <div key={t.id} data-tour={i === 0 ? "dev-tracks-cdi-focus" : undefined}>
+              <TrackCard
+                track={t} nudges={nudges} index={i}
+                onView={() => setDrawerTrack(t)}
+                onSend={() => setDrawerTrack(t)}
+              />
+            </div>
           ))}
         </div>
       )}
