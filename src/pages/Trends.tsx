@@ -203,7 +203,7 @@ const Trends = () => {
         </div>
 
         {!yoy && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div data-tour="trends-intervention-markers" className="flex flex-wrap gap-2 mt-3">
             {markers.map((m) => (
               <button
                 key={m.x}
