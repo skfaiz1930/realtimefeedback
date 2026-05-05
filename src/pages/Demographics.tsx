@@ -116,6 +116,7 @@ const Demographics = () => {
       {/* Problem Snapshot — always visible at top */}
       {snapshot && (
         <motion.section
+          data-tour="problem-snapshot-card"
           key={`${snapshot.label}-${snapshot.score}`}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
@@ -166,14 +167,14 @@ const Demographics = () => {
           )}
 
           <div className="text-[11px] text-muted-foreground mb-2">Cycle: <span className="font-medium text-foreground">{period}</span> · {managerCount} managers</div>
-          <Section title="Score by Department" rows={dataDept} />
+          <div data-tour="dept-score-bars"><Section title="Score by Department" rows={dataDept} /></div>
           <Section title="Score by Level"      rows={dataLevel} />
-          <Section title="Score by Tenure"     rows={dataTenure} />
+          <div data-tour="tenure-score-bars"><Section title="Score by Tenure"     rows={dataTenure} /></div>
           <Section title="Score by Gender"     rows={dataGender} />
         </div>
 
         {/* Filter panel */}
-        <aside className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
+        <aside data-tour="demographic-filter-panel" className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
           <div className="text-[13px] font-medium text-muted-foreground mb-4">Filter by</div>
           <div className="space-y-4">
             {groups.map((g) => (

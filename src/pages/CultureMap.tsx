@@ -50,7 +50,7 @@ export default function CultureMap() {
       </div>
 
       {/* Chart card */}
-      <div className="mt-6 bg-card border border-border rounded-xl shadow-card p-5 md:p-7">
+      <div data-tour="culture-map-container" className="mt-6 bg-card border border-border rounded-xl shadow-card p-5 md:p-7">
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <div className="text-[15px] font-medium">Manager Self vs Team Perception</div>
@@ -74,14 +74,10 @@ export default function CultureMap() {
             <div className="relative w-full aspect-square max-w-[640px] mx-auto">
               {/* Quadrant tints */}
               <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 rounded-lg overflow-hidden">
-                {/* top-left = Underrated (Self<70, Team>70) */}
                 <div style={{ background: quadrants[1].bg }} className="border-r border-b border-border/60" />
-                {/* top-right = Champions */}
-                <div style={{ background: quadrants[0].bg }} className="border-b border-border/60" />
-                {/* bottom-left = At Risk */}
-                <div style={{ background: quadrants[3].bg }} className="border-r border-border/60" />
-                {/* bottom-right = Blind Spots */}
-                <div style={{ background: quadrants[2].bg }} />
+                <div data-tour="quadrant-champions" style={{ background: quadrants[0].bg }} className="border-b border-border/60" />
+                <div data-tour="quadrant-atrisk" style={{ background: quadrants[3].bg }} className="border-r border-border/60" />
+                <div data-tour="quadrant-blindspots" style={{ background: quadrants[2].bg }} />
               </div>
 
               {/* Quadrant labels */}
@@ -120,6 +116,7 @@ export default function CultureMap() {
                 return (
                   <motion.div
                     key={m.id}
+                    data-tour={i === 0 ? "culture-map-dot-first" : undefined}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 0.85 }}
                     transition={{

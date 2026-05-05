@@ -72,6 +72,7 @@ const Trends = () => {
           </h2>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
+              data-tour="trends-yoy-toggle"
               onClick={() => setYoy((y) => !y)}
               className={`h-7 px-3 rounded-pill text-[11px] font-medium border transition-colors ${
                 yoy
@@ -111,7 +112,7 @@ const Trends = () => {
           </div>
         </div>
 
-        <div className="h-[360px] relative">
+        <div data-tour="trends-line-chart" className="h-[360px] relative">
           <ResponsiveContainer width="100%" height="100%">
             {yoy ? (
               <BarChart data={yoyData} margin={{ top: 28, right: 16, bottom: 8, left: -10 }} barCategoryGap="22%">
@@ -202,7 +203,7 @@ const Trends = () => {
         </div>
 
         {!yoy && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div data-tour="trends-intervention-markers" className="flex flex-wrap gap-2 mt-3">
             {markers.map((m) => (
               <button
                 key={m.x}
@@ -235,7 +236,7 @@ const Trends = () => {
       </div>
 
       {/* Cycle table */}
-      <div className="bg-card border border-border rounded-lg shadow-card p-5">
+      <div data-tour="trends-cycle-table" className="bg-card border border-border rounded-lg shadow-card p-5">
         <h3 className="text-[14px] font-medium mb-3">Cycle Summary</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-[12px]">
@@ -281,6 +282,7 @@ const Trends = () => {
         </div>
 
         <div
+          data-tour="trends-anomaly-section"
           className="mt-4 rounded-lg flex items-start gap-2.5 px-4 py-3"
           style={{ background: "#F0FDF4", borderLeft: "3px solid #16A34A" }}
         >

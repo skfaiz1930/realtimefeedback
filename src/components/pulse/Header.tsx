@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bell, Check, ChevronDown } from "lucide-react";
 import { CycleType, usePeriod } from "@/lib/periodContext";
 import { AskPulse } from "./AskPulse";
+import { PageTourButton } from "./Tour";
 
 interface Props {
   compare: boolean;
@@ -38,9 +39,9 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
       className="mb-8"
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="min-w-0">
+        <div data-tour="greeting-header" className="greeting-header min-w-0">
           <h1 className="text-[22px] font-medium tracking-tight">
-            Good morning, Priya <span className="inline-block">👋</span>
+            Good morning, PJ <span className="inline-block">👋</span>
           </h1>
           <p className="text-[14px] text-muted-foreground mt-0.5">
             Here's what needs your attention today.
@@ -52,6 +53,7 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+        <PageTourButton />
         <div ref={ref} data-tour="period-selector" className="relative">
           <button
             onClick={() => setOpen((o) => !o)}

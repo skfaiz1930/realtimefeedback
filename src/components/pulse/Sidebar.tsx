@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
-import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight, MapPin } from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
+import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight, MapPin, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSidebarState } from "@/lib/sidebarState";
 import { SidebarTrialCountdown } from "./TrialCountdown";
@@ -20,7 +20,8 @@ const items = [
 
 function SidebarBase() {
   const { collapsed, toggle } = useSidebarState();
-  const { start: startTour } = useTour();
+  const { startFullTour, startPageTour, fullCompleted } = useTour();
+  const location = useLocation();
 
   return (
     <motion.aside
@@ -50,12 +51,12 @@ function SidebarBase() {
         {/* User */}
         <div className={`mt-6 flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[13px] font-medium shrink-0">
-            PS
+            PJ
           </div>
           {!collapsed && (
             <div className="leading-tight">
-              <div className="text-[13px] font-medium">Priya Sharma</div>
-              <div className="text-[11px] text-muted-foreground">HR Head</div>
+              <div className="text-[13px] font-medium">PJ</div>
+              <div className="text-[11px] text-muted-foreground">CEO of GMI</div>
             </div>
           )}
         </div>
@@ -113,14 +114,35 @@ function SidebarBase() {
         </button>
 
         <button
-          onClick={startTour}
-          className={`w-full flex items-center gap-3 rounded-pill text-[13px] text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-colors ${
+          onClick={startFullTour}
+          className={`relative w-full flex items-center gap-3 rounded-pill text-[13px] text-muted-foreground hover:bg-primary/5 hover:text-[#C8102E] transition-colors ${
             collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
           }`}
-          title="Take a tour"
+          title="Full tour (all 7 pages)"
         >
           <MapPin size={16} />
-          {!collapsed && <span className="font-medium">Take a tour</span>}
+          {!collapsed && (
+            <span className="font-medium flex-1 flex items-center justify-between">
+              <span>Full tour <span className="text-[10px] text-muted-foreground/80 ml-1">~4 min</span></span>
+              {!fullCompleted && (
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8102E] opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8102E]" />
+                </span>
+              )}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => startPageTour(location.pathname)}
+          className={`w-full flex items-center gap-3 rounded-pill text-[13px] text-muted-foreground hover:bg-primary/5 hover:text-[#C8102E] transition-colors ${
+            collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+          }`}
+          title="Tour this page"
+        >
+          <HelpCircle size={16} />
+          {!collapsed && <span className="font-medium">Tour this page</span>}
         </button>
 
         <div data-tour="trial-countdown">

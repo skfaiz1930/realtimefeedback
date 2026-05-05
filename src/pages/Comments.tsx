@@ -180,6 +180,7 @@ const Comments = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
         <div>
           <div
+            data-tour="comments-ai-banner"
             className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3.5"
             style={{ background: "#F5F3FF", borderLeft: "3px solid #7F77DD" }}
           >
@@ -212,13 +213,13 @@ const Comments = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div data-tour="comments-theme-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {THEMES.map((t) => <ThemeCard key={t} theme={t} items={byTheme.get(t) ?? []} />)}
           </div>
         </div>
 
-        <aside className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
-          <div className="text-[13px] font-medium mb-3">Sentiment Overview</div>
+        <aside data-tour="comments-filter-bar" className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
+          <div data-tour="comments-sentiment-donut" className="text-[13px] font-medium mb-3">Sentiment Overview</div>
           <Donut pos={totals.pos} neu={totals.neu} neg={totals.neg} total={totals.total} />
           <div className="mt-5 space-y-2">
             <div className="flex items-center justify-between text-[12px]">
