@@ -74,7 +74,7 @@ const Index = () => {
           <PeriodSummaryAI />
 
           {/* Metric cards */}
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <section data-tour="kpi-cards-row" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div data-tour="org-health">
             <MetricCard
               label="Org Health Score"
