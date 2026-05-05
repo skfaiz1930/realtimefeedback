@@ -20,7 +20,8 @@ const items = [
 
 function SidebarBase() {
   const { collapsed, toggle } = useSidebarState();
-  const { start: startTour } = useTour();
+  const { startFullTour, startPageTour, fullCompleted } = useTour();
+  const location = useLocation();
 
   return (
     <motion.aside
