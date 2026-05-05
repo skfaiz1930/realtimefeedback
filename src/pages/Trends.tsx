@@ -282,6 +282,7 @@ const Trends = () => {
         </div>
 
         <div
+          data-tour="trends-anomaly-section"
           className="mt-4 rounded-lg flex items-start gap-2.5 px-4 py-3"
           style={{ background: "#F0FDF4", borderLeft: "3px solid #16A34A" }}
         >
