@@ -304,6 +304,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const back = useCallback(() => setIndex((i) => Math.max(0, i - 1)), []);
 
   const closeCompletion = useCallback(() => setShowCompletion(false), []);
+  const clearBridge = useCallback(() => setBridge(null), []);
 
   const current = steps[index] ?? null;
 
