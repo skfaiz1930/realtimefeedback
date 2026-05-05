@@ -116,6 +116,7 @@ export default function CultureMap() {
                 return (
                   <motion.div
                     key={m.id}
+                    data-tour={i === 0 ? "culture-map-dot-first" : undefined}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 0.85 }}
                     transition={{
