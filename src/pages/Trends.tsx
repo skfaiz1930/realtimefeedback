@@ -236,7 +236,7 @@ const Trends = () => {
       </div>
 
       {/* Cycle table */}
-      <div className="bg-card border border-border rounded-lg shadow-card p-5">
+      <div data-tour="trends-cycle-table" className="bg-card border border-border rounded-lg shadow-card p-5">
         <h3 className="text-[14px] font-medium mb-3">Cycle Summary</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-[12px]">
