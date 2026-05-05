@@ -116,6 +116,7 @@ const Demographics = () => {
       {/* Problem Snapshot — always visible at top */}
       {snapshot && (
         <motion.section
+          data-tour="problem-snapshot-card"
           key={`${snapshot.label}-${snapshot.score}`}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
