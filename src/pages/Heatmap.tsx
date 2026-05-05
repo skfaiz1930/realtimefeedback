@@ -238,7 +238,7 @@ const Heatmap = () => {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[720px]">
-            <thead className="sticky top-0 bg-card z-10">
+            <thead data-tour="heatmap-table-header" className="sticky top-0 bg-card z-10">
               <tr className="border-b border-border">
                 <th className="text-left text-[11px] uppercase tracking-wide text-muted-foreground font-medium px-5 py-3 w-[35%]">Question</th>
                 <th className="text-left text-[11px] uppercase tracking-wide text-muted-foreground font-medium py-3 w-[10%]">Theme</th>
