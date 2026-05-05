@@ -15,7 +15,7 @@ import NotFound from "./pages/NotFound.tsx";
 import { PeriodProvider } from "./lib/periodContext";
 import { SidebarProvider } from "./lib/sidebarState";
 import { TourProvider } from "./lib/tourState";
-import { Tour, TourCompletionModal } from "./components/pulse/Tour";
+import { Tour, TourCompletionModal, PageTourCompletionWatcher } from "./components/pulse/Tour";
 
 const queryClient = new QueryClient();
 
