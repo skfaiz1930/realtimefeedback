@@ -72,6 +72,7 @@ const Trends = () => {
           </h2>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
+              data-tour="trends-yoy-toggle"
               onClick={() => setYoy((y) => !y)}
               className={`h-7 px-3 rounded-pill text-[11px] font-medium border transition-colors ${
                 yoy
