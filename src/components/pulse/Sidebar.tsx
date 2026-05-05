@@ -51,12 +51,12 @@ function SidebarBase() {
         {/* User */}
         <div className={`mt-6 flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[13px] font-medium shrink-0">
-            PS
+            PJ
           </div>
           {!collapsed && (
             <div className="leading-tight">
-              <div className="text-[13px] font-medium">Priya Sharma</div>
-              <div className="text-[11px] text-muted-foreground">HR Head</div>
+              <div className="text-[13px] font-medium">PJ</div>
+              <div className="text-[11px] text-muted-foreground">CEO of GMI</div>
             </div>
           )}
         </div>
