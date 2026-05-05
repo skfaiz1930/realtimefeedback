@@ -31,6 +31,7 @@ const Index = () => {
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
+  const [rrOpen, setRrOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
   const attentionManagers = useMemo(() => {
