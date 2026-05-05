@@ -50,7 +50,7 @@ export default function CultureMap() {
       </div>
 
       {/* Chart card */}
-      <div className="mt-6 bg-card border border-border rounded-xl shadow-card p-5 md:p-7">
+      <div data-tour="culture-map-container" className="mt-6 bg-card border border-border rounded-xl shadow-card p-5 md:p-7">
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <div className="text-[15px] font-medium">Manager Self vs Team Perception</div>
