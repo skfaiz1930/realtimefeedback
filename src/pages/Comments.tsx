@@ -180,6 +180,7 @@ const Comments = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
         <div>
           <div
+            data-tour="comments-ai-banner"
             className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3.5"
             style={{ background: "#F5F3FF", borderLeft: "3px solid #7F77DD" }}
           >
