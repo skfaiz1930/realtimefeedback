@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSidebarState } from "@/lib/sidebarState";
+import { SidebarTrialCountdown } from "./TrialCountdown";
 
 const items = [
   { to: "/",             label: "Overview",     icon: Home },
