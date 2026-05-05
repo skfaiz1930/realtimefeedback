@@ -159,11 +159,13 @@ const Heatmap = () => {
 
   return (
     <PageShell>
-      <HeatmapDiagnosticGuide
-        questions={aiPayload}
-        onFindingClick={handleFindingClick}
-        onFindingsLoaded={setFindings}
-      />
+      <div data-tour="heatmap-ai-guide">
+        <HeatmapDiagnosticGuide
+          questions={aiPayload}
+          onFindingClick={handleFindingClick}
+          onFindingsLoaded={setFindings}
+        />
+      </div>
 
       <HeatmapTracksBridge findings={findings} />
 
@@ -177,9 +179,23 @@ const Heatmap = () => {
         </p>
       </div>
 
+      <div data-tour="heatmap-color-legend" className="mb-5 flex flex-wrap items-center gap-2 text-[11px]">
+        {[
+          { l: "Strong (90+)", c: "#16A34A" },
+          { l: "Acceptable (75–89)", c: "#FACC15" },
+          { l: "Needs attention (60–74)", c: "#F59E0B" },
+          { l: "Critical (<60)", c: "#DC2626" },
+        ].map((x) => (
+          <span key={x.l} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill border border-border bg-card text-muted-foreground">
+            <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: x.c }} />
+            {x.l}
+          </span>
+        ))}
+      </div>
+
       <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
         {/* Filter bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border">
+        <div data-tour="heatmap-filter-pills" className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             {filters.map((f) => {
               const active = dimFilter === f;
