@@ -287,6 +287,17 @@ const Index = () => {
           Open the desktop view for the full AI summary panel, recommended actions, and respondent breakdown.
         </p>
       </Drawer>
+
+      <Dialog open={rrOpen} onOpenChange={setRrOpen}>
+        <DialogContent className="max-w-[920px] max-h-[85vh] overflow-y-auto p-0">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle>Response Rate Breakdown</DialogTitle>
+          </DialogHeader>
+          <div className="px-4 pb-4">
+            <ResponseRateBreakdown />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
