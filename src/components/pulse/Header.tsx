@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bell, Check, ChevronDown } from "lucide-react";
 import { CycleType, usePeriod } from "@/lib/periodContext";
 import { AskPulse } from "./AskPulse";
+import { PageTourButton } from "./Tour";
 
 interface Props {
   compare: boolean;
