@@ -218,6 +218,7 @@ interface TourCtx {
   skip: () => void;
   finish: () => void;
   closeCompletion: () => void;
+  clearBridge: () => void;
   fullCompleted: boolean;
 }
 
