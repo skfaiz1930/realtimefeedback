@@ -331,8 +331,9 @@ export function TourProvider({ children }: { children: ReactNode }) {
     skip,
     finish,
     closeCompletion,
+    clearBridge,
     fullCompleted,
-  }), [mode, steps, index, current, showCompletion, bridge, startFullTour, startPageTour, next, back, skip, finish, closeCompletion, fullCompleted]);
+  }), [mode, steps, index, current, showCompletion, bridge, startFullTour, startPageTour, next, back, skip, finish, closeCompletion, clearBridge, fullCompleted]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
