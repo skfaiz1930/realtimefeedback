@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, ChevronRight, HelpCircle, MousePointerClick, PanelRightOpen } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -43,6 +43,17 @@ const Index = () => {
       .slice(0, 14);
   }, [period, snapshot.delta]);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { id?: string } | undefined;
+      const all = getManagersForCycle(period, snapshot.delta);
+      const target = all.find((m) => m.id === (detail?.id ?? "1")) ?? all[0];
+      if (target) setMgrDrawer(target);
+    };
+    window.addEventListener("pulse:open-manager", handler);
+    return () => window.removeEventListener("pulse:open-manager", handler);
+  }, [period, snapshot.delta]);
+
   const handleCompare = () => {
     setCompare((c) => !c);
     setRefreshKey((k) => k + 1);
@@ -64,6 +75,7 @@ const Index = () => {
 
           {/* Metric cards */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div data-tour="org-health">
             <MetricCard
               label="Org Health Score"
               value={72}
@@ -90,6 +102,7 @@ const Index = () => {
                 </>
               }
             />
+            </div>
             <MetricCard
               label="Managers Active"
               value={48}
@@ -122,7 +135,7 @@ const Index = () => {
               }
               belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
-            <div onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
+            <div data-tour="response-rate" onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
               <MetricCard
                 label="Response Rate"
                 value={76}
@@ -138,6 +151,7 @@ const Index = () => {
                 }
               />
             </div>
+            <div data-tour="at-risk-kpi">
             <MetricCard
               label="At-Risk Teams"
               value={6}
@@ -147,10 +161,12 @@ const Index = () => {
               refreshKey={refreshKey}
               extra={<AlertCircle size={16} className="text-primary ml-1" />}
             />
+            </div>
           </section>
 
           {/* CDI Bars */}
           <motion.section
+            data-tour="cdi-bars"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.35 }}
@@ -184,7 +200,7 @@ const Index = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               <span className="text-[11px] text-muted-foreground">{attentionManagers.length} managers</span>
             </div>
-            <div className="relative">
+            <div data-tour="attention-strip" className="relative">
               <div
                 ref={mgrScrollRef}
                 className="flex gap-3 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1 scroll-smooth"

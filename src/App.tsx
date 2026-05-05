@@ -14,6 +14,8 @@ import Comments from "./pages/Comments.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { PeriodProvider } from "./lib/periodContext";
 import { SidebarProvider } from "./lib/sidebarState";
+import { TourProvider } from "./lib/tourState";
+import { Tour, TourCompletionModal } from "./components/pulse/Tour";
 
 const queryClient = new QueryClient();
 
@@ -43,9 +45,13 @@ const App = () => (
       <Sonner />
       <PeriodProvider>
         <SidebarProvider>
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
+          <TourProvider>
+            <BrowserRouter>
+              <AnimatedRoutes />
+              <Tour />
+              <TourCompletionModal />
+            </BrowserRouter>
+          </TourProvider>
         </SidebarProvider>
       </PeriodProvider>
     </TooltipProvider>

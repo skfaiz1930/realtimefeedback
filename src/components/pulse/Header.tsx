@@ -47,12 +47,12 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
           </p>
         </div>
 
-        <div className="hidden md:block relative z-30">
+        <div data-tour="ask-pulse" className="hidden md:block relative z-30">
           <AskPulse />
         </div>
 
         <div className="flex items-center gap-2">
-        <div ref={ref} className="relative">
+        <div ref={ref} data-tour="period-selector" className="relative">
           <button
             onClick={() => setOpen((o) => !o)}
             className="flex items-center gap-1.5 h-9 px-3.5 rounded-pill bg-card border border-border text-[13px] font-medium hover:bg-muted/50 transition-colors"

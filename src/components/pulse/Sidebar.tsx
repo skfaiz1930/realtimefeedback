@@ -1,10 +1,11 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Home, Users, Grid3x3, LineChart, MessageSquare, Settings, LogOut, UserCircle2, Map, Target, ChevronsLeft, ChevronsRight, MapPin } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSidebarState } from "@/lib/sidebarState";
 import { SidebarTrialCountdown } from "./TrialCountdown";
+import { useTour } from "@/lib/tourState";
 
 const items = [
   { to: "/",             label: "Overview",     icon: Home },
@@ -19,6 +20,7 @@ const items = [
 
 function SidebarBase() {
   const { collapsed, toggle } = useSidebarState();
+  const { start: startTour } = useTour();
 
   return (
     <motion.aside
@@ -60,7 +62,7 @@ function SidebarBase() {
       </div>
 
       {/* Nav */}
-      <nav className={`mt-2 flex-1 ${collapsed ? "px-2" : "px-3"}`}>
+      <nav data-tour="sidebar-nav" className={`mt-2 flex-1 ${collapsed ? "px-2" : "px-3"}`}>
         {items.map((item, i) => {
           const Icon = item.icon;
           const link = (
@@ -110,7 +112,20 @@ function SidebarBase() {
           {!collapsed && <span className="font-medium">Settings</span>}
         </button>
 
-        <SidebarTrialCountdown collapsed={collapsed} />
+        <button
+          onClick={startTour}
+          className={`w-full flex items-center gap-3 rounded-pill text-[13px] text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-colors ${
+            collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+          }`}
+          title="Take a tour"
+        >
+          <MapPin size={16} />
+          {!collapsed && <span className="font-medium">Take a tour</span>}
+        </button>
+
+        <div data-tour="trial-countdown">
+          <SidebarTrialCountdown collapsed={collapsed} />
+        </div>
 
         <button className={`w-full flex items-center gap-2 text-[12px] text-muted-foreground hover:text-foreground transition-colors ${
           collapsed ? "justify-center" : "px-3"
