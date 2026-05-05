@@ -213,7 +213,7 @@ const Comments = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div data-tour="comments-theme-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {THEMES.map((t) => <ThemeCard key={t} theme={t} items={byTheme.get(t) ?? []} />)}
           </div>
         </div>
