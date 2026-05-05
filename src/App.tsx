@@ -50,6 +50,7 @@ const App = () => (
               <AnimatedRoutes />
               <Tour />
               <TourCompletionModal />
+              <PageTourCompletionWatcher />
             </BrowserRouter>
           </TourProvider>
         </SidebarProvider>
