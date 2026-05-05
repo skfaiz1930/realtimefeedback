@@ -196,11 +196,17 @@ function ThemeCard({ t }: { t: Theme }) {
   );
 }
 
+const DEPTS = ["All", "Sales", "Engineering", "Product", "Marketing", "Operations", "Customer Success", "Finance", "HR", "Design", "Data"];
+const AGES = ["All", "18-24", "25-34", "35-44", "45-54", "55+"];
+
 const Comments = () => {
   const [dim, setDim] = useState<Dim>("All");
   const [resp, setResp] = useState("All");
+  const [demoType, setDemoType] = useState<"department" | "manager" | "age">("department");
+  const [demoValue, setDemoValue] = useState<string>("All");
   const { period, snapshot } = usePeriod();
-  const managerCount = useMemo(() => getManagersForCycle(period, snapshot.delta).length, [period, snapshot.delta]);
+  const allManagers = useMemo(() => getManagersForCycle(period, snapshot.delta), [period, snapshot.delta]);
+  const managerCount = allManagers.length;
   const cycleThemes = useMemo(() => themes.map((t) => ({
     ...t,
     count: Math.max(8, Math.round(t.count + cycleNoise(period, t.name, 18))),
@@ -209,6 +215,10 @@ const Comments = () => {
 
   const dims: Dim[] = ["All", "Connect", "Develop", "Inspire"];
   const respOpts = ["All", "Manager Self", "Team Member", "Peer", "RM"];
+
+  const demoOptions = demoType === "department" ? DEPTS
+    : demoType === "age" ? AGES
+    : ["All", ...allManagers.slice(0, 30).map((m) => m.name)];
 
   return (
     <PageShell>
@@ -288,6 +298,31 @@ const Comments = () => {
               >{r}</button>
             ))}
           </div>
+
+          <div className="border-t border-border my-5" />
+
+          <div className="text-[13px] font-medium mb-2">Filter by demographics</div>
+          <div className="inline-flex rounded-md border border-border overflow-hidden mb-2">
+            {(["department", "manager", "age"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => { setDemoType(t); setDemoValue("All"); }}
+                className={`px-2.5 py-1 text-[11px] font-medium capitalize transition-colors ${demoType === t ? "bg-foreground text-background" : "bg-card text-muted-foreground hover:text-foreground"}`}
+              >{t}</button>
+            ))}
+          </div>
+          <select
+            value={demoValue}
+            onChange={(e) => setDemoValue(e.target.value)}
+            className="w-full text-[12px] px-2.5 py-1.5 rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            {demoOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+          </select>
+          {demoValue !== "All" && (
+            <div className="mt-2 text-[11px] text-muted-foreground">
+              Showing comments from <span className="font-semibold text-foreground">{demoValue}</span>
+            </div>
+          )}
         </aside>
       </div>
     </PageShell>

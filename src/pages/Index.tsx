@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, ChevronRight, HelpCircle, PanelRightOpen } from "lucide-react";
+import { AlertCircle, ChevronRight, HelpCircle, MousePointerClick, PanelRightOpen } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sidebar } from "@/components/pulse/Sidebar";
 import { Header } from "@/components/pulse/Header";
 import { MetricCard } from "@/components/pulse/MetricCard";
@@ -30,6 +31,7 @@ const Index = () => {
   const [dimDrawer, setDimDrawer] = useState<Dimension | null>(null);
   const [mgrDrawer, setMgrDrawer] = useState<Manager | null>(null);
   const [aiOpen, setAiOpen] = useState(false);
+  const [rrOpen, setRrOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
 
   const attentionManagers = useMemo(() => {
@@ -120,15 +122,22 @@ const Index = () => {
               }
               belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
-            <MetricCard
-              label="Response Rate"
-              value={76}
-              suffix="%"
-              trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
-              delay={360}
-              duration={900}
-              refreshKey={refreshKey}
-            />
+            <div onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
+              <MetricCard
+                label="Response Rate"
+                value={76}
+                suffix="%"
+                trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
+                delay={360}
+                duration={900}
+                refreshKey={refreshKey}
+                belowValue={
+                  <div className="mt-1 inline-flex items-center gap-1 text-[10.5px] text-primary font-medium animate-pulse">
+                    <MousePointerClick size={11} /> Click for breakdown
+                  </div>
+                }
+              />
+            </div>
             <MetricCard
               label="At-Risk Teams"
               value={6}
@@ -198,7 +207,7 @@ const Index = () => {
             </div>
           </motion.section>
 
-          <ResponseRateBreakdown />
+          
 
           <TopPerformingTeams onClick={(m) => setMgrDrawer(m)} />
 
@@ -278,6 +287,17 @@ const Index = () => {
           Open the desktop view for the full AI summary panel, recommended actions, and respondent breakdown.
         </p>
       </Drawer>
+
+      <Dialog open={rrOpen} onOpenChange={setRrOpen}>
+        <DialogContent className="max-w-[920px] max-h-[85vh] overflow-y-auto p-0">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle>Response Rate Breakdown</DialogTitle>
+          </DialogHeader>
+          <div className="px-4 pb-4">
+            <ResponseRateBreakdown />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
