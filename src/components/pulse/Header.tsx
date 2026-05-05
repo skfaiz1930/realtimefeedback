@@ -53,6 +53,7 @@ function HeaderBase({ compare, onToggleCompare }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+        <PageTourButton />
         <div ref={ref} data-tour="period-selector" className="relative">
           <button
             onClick={() => setOpen((o) => !o)}
