@@ -167,9 +167,9 @@ const Demographics = () => {
           )}
 
           <div className="text-[11px] text-muted-foreground mb-2">Cycle: <span className="font-medium text-foreground">{period}</span> · {managerCount} managers</div>
-          <Section title="Score by Department" rows={dataDept} />
+          <div data-tour="dept-score-bars"><Section title="Score by Department" rows={dataDept} /></div>
           <Section title="Score by Level"      rows={dataLevel} />
-          <Section title="Score by Tenure"     rows={dataTenure} />
+          <div data-tour="tenure-score-bars"><Section title="Score by Tenure"     rows={dataTenure} /></div>
           <Section title="Score by Gender"     rows={dataGender} />
         </div>
 
