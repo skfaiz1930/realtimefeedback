@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, ChevronRight, HelpCircle, MousePointerClick, PanelRightOpen } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -41,6 +41,17 @@ const Index = () => {
       .filter((m) => m.risk !== "healthy")
       .sort((a, b) => order[a.risk] - order[b.risk] || a.score - b.score)
       .slice(0, 14);
+  }, [period, snapshot.delta]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { id?: string } | undefined;
+      const all = getManagersForCycle(period, snapshot.delta);
+      const target = all.find((m) => m.id === (detail?.id ?? "1")) ?? all[0];
+      if (target) setMgrDrawer(target);
+    };
+    window.addEventListener("pulse:open-manager", handler);
+    return () => window.removeEventListener("pulse:open-manager", handler);
   }, [period, snapshot.delta]);
 
   const handleCompare = () => {
