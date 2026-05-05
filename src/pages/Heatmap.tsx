@@ -333,7 +333,7 @@ const Heatmap = () => {
                 ))}
 
                 {/* Bottom average */}
-                <tr style={{ background: "#FAFAF9" }}>
+                <tr data-tour="heatmap-summary-row" style={{ background: "#FAFAF9" }}>
                   <td className="px-5 py-3 text-[13px] font-semibold">Avg across all questions</td>
                   <td />
                   {respCols.map((r) => activeResp[r.key] && (
