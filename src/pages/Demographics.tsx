@@ -174,7 +174,7 @@ const Demographics = () => {
         </div>
 
         {/* Filter panel */}
-        <aside className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
+        <aside data-tour="demographic-filter-panel" className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
           <div className="text-[13px] font-medium text-muted-foreground mb-4">Filter by</div>
           <div className="space-y-4">
             {groups.map((g) => (
