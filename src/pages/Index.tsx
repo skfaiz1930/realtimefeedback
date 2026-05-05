@@ -121,15 +121,22 @@ const Index = () => {
               }
               belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
-            <MetricCard
-              label="Response Rate"
-              value={76}
-              suffix="%"
-              trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
-              delay={360}
-              duration={900}
-              refreshKey={refreshKey}
-            />
+            <div onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
+              <MetricCard
+                label="Response Rate"
+                value={76}
+                suffix="%"
+                trend={{ dir: "up", text: "+4% vs last cycle", tone: "success" }}
+                delay={360}
+                duration={900}
+                refreshKey={refreshKey}
+                belowValue={
+                  <div className="mt-1 inline-flex items-center gap-1 text-[10.5px] text-primary font-medium animate-pulse">
+                    <MousePointerClick size={11} /> Click for breakdown
+                  </div>
+                }
+              />
+            </div>
             <MetricCard
               label="At-Risk Teams"
               value={6}
