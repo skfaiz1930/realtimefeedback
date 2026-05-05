@@ -200,7 +200,7 @@ const Index = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               <span className="text-[11px] text-muted-foreground">{attentionManagers.length} managers</span>
             </div>
-            <div className="relative">
+            <div data-tour="attention-strip" className="relative">
               <div
                 ref={mgrScrollRef}
                 className="flex gap-3 overflow-x-auto no-scrollbar pb-3 -mx-1 px-1 scroll-smooth"
