@@ -75,6 +75,7 @@ const Index = () => {
 
           {/* Metric cards */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div data-tour="org-health">
             <MetricCard
               label="Org Health Score"
               value={72}
@@ -101,6 +102,7 @@ const Index = () => {
                 </>
               }
             />
+            </div>
             <MetricCard
               label="Managers Active"
               value={48}
@@ -133,7 +135,7 @@ const Index = () => {
               }
               belowValue={<div className="text-[11px] text-muted-foreground font-medium">92%</div>}
             />
-            <div onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
+            <div data-tour="response-rate" onClick={() => setRrOpen(true)} className="relative group" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setRrOpen(true); }}>
               <MetricCard
                 label="Response Rate"
                 value={76}
@@ -149,6 +151,7 @@ const Index = () => {
                 }
               />
             </div>
+            <div data-tour="at-risk-kpi">
             <MetricCard
               label="At-Risk Teams"
               value={6}
@@ -158,10 +161,12 @@ const Index = () => {
               refreshKey={refreshKey}
               extra={<AlertCircle size={16} className="text-primary ml-1" />}
             />
+            </div>
           </section>
 
           {/* CDI Bars */}
           <motion.section
+            data-tour="cdi-bars"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.35 }}
