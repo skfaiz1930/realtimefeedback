@@ -130,7 +130,8 @@ export default function DevelopmentTracks() {
         </section>
       )}
 
-      <ImpactSection tracks={tracks} nudges={nudges} />
+      <div data-tour="dev-tracks-nudge-section" />
+      <div data-tour="dev-tracks-progress-chart"><ImpactSection tracks={tracks} nudges={nudges} /></div>
 
       <TrackDrawer track={drawerTrack} onClose={() => setDrawerTrack(null)} onChange={refresh} />
     </PageShell>
