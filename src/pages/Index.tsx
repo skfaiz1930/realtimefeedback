@@ -207,7 +207,7 @@ const Index = () => {
             </div>
           </motion.section>
 
-          <ResponseRateBreakdown />
+          
 
           <TopPerformingTeams onClick={(m) => setMgrDrawer(m)} />
 
