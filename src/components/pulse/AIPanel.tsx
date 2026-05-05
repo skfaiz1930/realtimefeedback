@@ -22,7 +22,7 @@ function AIPanelBase() {
     >
       <div className="p-6 space-y-6">
         {/* AI Insights */}
-        <section>
+        <section data-tour="ai-summary">
           <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-medium">
             <Sparkles size={11} className="text-primary" />
             AI Insights
@@ -51,7 +51,7 @@ function AIPanelBase() {
         <div className="border-t border-border" />
 
         {/* Recommended actions */}
-        <section>
+        <section data-tour="ai-actions">
           <h3 className="text-[13px] font-semibold mb-2.5">Recommended Actions</h3>
           <div className="space-y-2">
             {recommendedActions.map((a) => (
