@@ -218,8 +218,8 @@ const Comments = () => {
           </div>
         </div>
 
-        <aside className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
-          <div className="text-[13px] font-medium mb-3">Sentiment Overview</div>
+        <aside data-tour="comments-filter-bar" className="bg-card border border-border rounded-lg shadow-card p-5 self-start lg:sticky lg:top-5">
+          <div data-tour="comments-sentiment-donut" className="text-[13px] font-medium mb-3">Sentiment Overview</div>
           <Donut pos={totals.pos} neu={totals.neu} neg={totals.neg} total={totals.total} />
           <div className="mt-5 space-y-2">
             <div className="flex items-center justify-between text-[12px]">
