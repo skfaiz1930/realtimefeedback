@@ -36,6 +36,11 @@ const Index = () => {
   const [aiOpen, setAiOpen] = useState(false);
   const [rrOpen, setRrOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+  const mgrComments = useMemo(
+    () => mgrDrawer ? getComments(period).filter((c) => c.managerId === mgrDrawer.id) : [],
+    [mgrDrawer, period]
+  );
 
   const attentionManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
