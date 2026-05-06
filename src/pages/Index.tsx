@@ -12,6 +12,9 @@ import { Drawer } from "@/components/pulse/Drawer";
 import { MobileNav } from "@/components/pulse/MobileNav";
 import { PeriodSummaryAI } from "@/components/pulse/PeriodSummaryAI";
 import { CoachingBrief } from "@/components/pulse/CoachingBrief";
+import { CommentSynthesizer } from "@/components/pulse/CommentSynthesizer";
+import { getComments } from "@/lib/commentsData";
+import { useNavigate } from "react-router-dom";
 import { ManagerTrackPanel } from "@/components/pulse/ManagerTrackPanel";
 import { dimensions, type Dimension, type Manager } from "@/lib/data";
 import { usePeriod } from "@/lib/periodContext";
@@ -33,6 +36,11 @@ const Index = () => {
   const [aiOpen, setAiOpen] = useState(false);
   const [rrOpen, setRrOpen] = useState(false);
   const mgrScrollRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+  const mgrComments = useMemo(
+    () => mgrDrawer ? getComments(period).filter((c) => c.managerId === mgrDrawer.id) : [],
+    [mgrDrawer, period]
+  );
 
   const attentionManagers = useMemo(() => {
     const order = { "at-risk": 0, "watch": 1, "healthy": 2 } as const;
@@ -292,6 +300,17 @@ const Index = () => {
             </div>
             <TeamDrilldown manager={mgrDrawer} />
             <ManagerTrackPanel manager={mgrDrawer} />
+            <div className="mt-6">
+              <CommentSynthesizer
+                comments={mgrComments}
+                period={period}
+                scope="manager"
+                managerName={mgrDrawer.name}
+                compact
+                autoGenerate
+                onViewAllHref={() => navigate("/comments")}
+              />
+            </div>
             <CoachingBrief manager={mgrDrawer} />
           </div>
         )}
