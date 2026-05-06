@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import { PageShell } from "@/components/pulse/PageShell";
+import { CommentSynthesizer } from "@/components/pulse/CommentSynthesizer";
 import { usePeriod } from "@/lib/periodContext";
 import { getManagersForCycle } from "@/lib/managerPool";
 import { getComments, THEMES, type Comment, type Sent } from "@/lib/commentsData";
