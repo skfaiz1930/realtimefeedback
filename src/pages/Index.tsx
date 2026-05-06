@@ -300,6 +300,17 @@ const Index = () => {
             </div>
             <TeamDrilldown manager={mgrDrawer} />
             <ManagerTrackPanel manager={mgrDrawer} />
+            <div className="mt-6">
+              <CommentSynthesizer
+                comments={mgrComments}
+                period={period}
+                scope="manager"
+                managerName={mgrDrawer.name}
+                compact
+                autoGenerate
+                onViewAllHref={() => navigate("/comments")}
+              />
+            </div>
             <CoachingBrief manager={mgrDrawer} />
           </div>
         )}
