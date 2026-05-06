@@ -179,15 +179,17 @@ const Comments = () => {
     <PageShell>
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
         <div>
-          <div
-            data-tour="comments-ai-banner"
-            className="mb-5 rounded-lg flex items-start gap-2.5 px-4 py-3.5"
-            style={{ background: "#F5F3FF", borderLeft: "3px solid #7F77DD" }}
-          >
-            <Sparkles size={16} className="text-[#7F77DD] mt-0.5 shrink-0" />
-            <p className="text-[13px] text-foreground/85 leading-relaxed">
-              <span className="font-semibold">AI Summary:</span> Across {totals.total} filtered comments, {pct(totals.neg)}% are negative. The most common negative themes are Growth & Development and Workload — aligned with the Develop dimension scoring lowest.
-            </p>
+          <div data-tour="comments-ai-banner" className="mb-5">
+            <CommentSynthesizer
+              comments={filtered}
+              period={period}
+              filters={{
+                dimension: dim,
+                respondent: resp,
+                ...(demoValue !== "All" ? { [demoType]: demoValue } : {}),
+              }}
+              scope="org"
+            />
           </div>
 
           <div className="mb-3 flex items-end justify-between gap-3 flex-wrap">
