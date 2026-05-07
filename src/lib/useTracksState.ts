@@ -14,11 +14,33 @@ interface State {
 
 let cache: { tracks: DevelopmentTrack[]; nudges: ManagerNudge[] } | null = null;
 const subscribers = new Set<() => void>();
+let inflight: Promise<void> | null = null;
+let sharedChannel: ReturnType<typeof supabase.channel> | null = null;
 
 async function reload() {
-  const [tracks, nudges] = await Promise.all([listTracks(), listNudges()]);
-  cache = { tracks: tracks.filter((t) => t.status !== "completed"), nudges };
-  subscribers.forEach((fn) => fn());
+  // Dedupe concurrent reloads — multiple components mounting simultaneously
+  // would otherwise fire the same fetches in parallel and the browser aborts
+  // the duplicates (which Firefox surfaces as "CORS request did not succeed").
+  if (inflight) return inflight;
+  inflight = (async () => {
+    try {
+      const [tracks, nudges] = await Promise.all([listTracks(), listNudges()]);
+      cache = { tracks: tracks.filter((t) => t.status !== "completed"), nudges };
+      subscribers.forEach((fn) => fn());
+    } finally {
+      inflight = null;
+    }
+  })();
+  return inflight;
+}
+
+function ensureChannel() {
+  if (sharedChannel) return;
+  sharedChannel = supabase
+    .channel("tracks-realtime-shared")
+    .on("postgres_changes", { event: "*", schema: "public", table: "development_tracks" }, () => { reload().catch(() => {}); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "manager_nudges" }, () => { reload().catch(() => {}); })
+    .subscribe();
 }
 
 export function useTracksState(): State {
@@ -28,18 +50,14 @@ export function useTracksState(): State {
   useEffect(() => {
     const fn = () => setTick((n) => n + 1);
     subscribers.add(fn);
+    ensureChannel();
     if (!cache) reload().catch(() => {}).finally(() => setLoading(false));
     else setLoading(false);
 
-    const ch = supabase
-      .channel(`tracks-realtime-${Math.random().toString(36).slice(2)}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "development_tracks" }, () => reload())
-      .on("postgres_changes", { event: "*", schema: "public", table: "manager_nudges" }, () => reload())
-      .subscribe();
-
     return () => {
       subscribers.delete(fn);
-      supabase.removeChannel(ch);
+      // keep the shared channel alive for the session — cheaper than tearing it down
+      // and re-opening it as components mount/unmount across navigation.
     };
   }, []);
 
