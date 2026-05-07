@@ -1,1 +1,28 @@
 project_id = "qyfatebfemfoicyszfew"
+
+[functions.ask-pulse]
+verify_jwt = false
+
+[functions.coaching-brief]
+verify_jwt = false
+
+[functions.comment-synthesis]
+verify_jwt = false
+
+[functions.compose-nudge]
+verify_jwt = false
+
+[functions.development-plan]
+verify_jwt = false
+
+[functions.heatmap-diagnostic]
+verify_jwt = false
+
+[functions.period-summary]
+verify_jwt = false
+
+[functions.schedule-nudges]
+verify_jwt = false
+
+[functions.suggest-nudges]
+verify_jwt = false
